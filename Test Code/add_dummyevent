@@ -1,0 +1,7 @@
+import requests
+
+#Dummy Event
+event1 = {"title": "Dummy Event", "description": "To be maniuplated or deleted. Testing purposes only", "priceperseat":37,"durationhours":3}
+
+r = requests.post("http://localhost:5000/events", json=event1)
+print(f'Response Code For First Post: {r.status_code}\n{r.text}')

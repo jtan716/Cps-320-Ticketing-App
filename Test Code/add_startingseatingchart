@@ -1,0 +1,81 @@
+import requests
+
+#Seating Chart for First Event
+seating1a = {"eventlinkid": 1, "rowid": "A", "colid": 1}
+seating1b = {"eventlinkid": 1, "rowid": "B", "colid": 1}
+seating1c = {"eventlinkid": 1, "rowid": "C", "colid": 1}
+seating1d = {"eventlinkid": 1, "rowid": "D", "colid": 1}
+seating1e = {"eventlinkid": 1, "rowid": "E", "colid": 1}
+seating2a = {"eventlinkid": 1, "rowid": "A", "colid": 2}
+seating2b = {"eventlinkid": 1, "rowid": "B", "colid": 2}
+seating2c = {"eventlinkid": 1, "rowid": "C", "colid": 2}
+seating2d = {"eventlinkid": 1, "rowid": "D", "colid": 2}
+seating2e = {"eventlinkid": 1, "rowid": "E", "colid": 2}
+seating3a = {"eventlinkid": 1, "rowid": "A", "colid": 3}
+seating3b = {"eventlinkid": 1, "rowid": "B", "colid": 3}
+seating3c = {"eventlinkid": 1, "rowid": "C", "colid": 3}
+seating3d = {"eventlinkid": 1, "rowid": "D", "colid": 3}
+seating3e = {"eventlinkid": 1, "rowid": "E", "colid": 3}
+seating4a = {"eventlinkid": 1, "rowid": "A", "colid": 4}
+seating4b = {"eventlinkid": 1, "rowid": "B", "colid": 4}
+seating4c = {"eventlinkid": 1, "rowid": "C", "colid": 4}
+seating4d = {"eventlinkid": 1, "rowid": "D", "colid": 4}
+seating4e = {"eventlinkid": 1, "rowid": "E", "colid": 4}
+seating5a = {"eventlinkid": 1, "rowid": "A", "colid": 5}
+seating5b = {"eventlinkid": 1, "rowid": "B", "colid": 5}
+seating5c = {"eventlinkid": 1, "rowid": "C", "colid": 5}
+seating5d = {"eventlinkid": 1, "rowid": "D", "colid": 5}
+seating5e = {"eventlinkid": 1, "rowid": "E", "colid": 5}
+
+
+r1 = requests.post("http://localhost:5000/events/1/seating",json=seating1a) 
+r2 = requests.post("http://localhost:5000/events/1/seating",json=seating1b) 
+r3 = requests.post("http://localhost:5000/events/1/seating",json=seating1c) 
+r4 = requests.post("http://localhost:5000/events/1/seating",json=seating1d) 
+r5 = requests.post("http://localhost:5000/events/1/seating",json=seating1e) 
+r6 = requests.post("http://localhost:5000/events/1/seating",json=seating2a) 
+r7 = requests.post("http://localhost:5000/events/1/seating",json=seating2b) 
+r8 = requests.post("http://localhost:5000/events/1/seating",json=seating2c) 
+r9 = requests.post("http://localhost:5000/events/1/seating",json=seating2d) 
+r10 = requests.post("http://localhost:5000/events/1/seating",json=seating2e) 
+r11 = requests.post("http://localhost:5000/events/1/seating",json=seating3a) 
+r12 = requests.post("http://localhost:5000/events/1/seating",json=seating3b) 
+r13 = requests.post("http://localhost:5000/events/1/seating",json=seating3c) 
+r14 = requests.post("http://localhost:5000/events/1/seating",json=seating3d) 
+r15 = requests.post("http://localhost:5000/events/1/seating",json=seating3e) 
+r16 = requests.post("http://localhost:5000/events/1/seating",json=seating4a) 
+r17 = requests.post("http://localhost:5000/events/1/seating",json=seating4b) 
+r18 = requests.post("http://localhost:5000/events/1/seating",json=seating4c) 
+r19 = requests.post("http://localhost:5000/events/1/seating",json=seating4d) 
+r20 = requests.post("http://localhost:5000/events/1/seating",json=seating4e) 
+r21 = requests.post("http://localhost:5000/events/1/seating",json=seating5a) 
+r22 = requests.post("http://localhost:5000/events/1/seating",json=seating5b) 
+r23 = requests.post("http://localhost:5000/events/1/seating",json=seating5c) 
+r24 = requests.post("http://localhost:5000/events/1/seating",json=seating5d) 
+r25 = requests.post("http://localhost:5000/events/1/seating",json=seating5e) 
+
+print(f'Response Code: { r1.status_code}\n{r1.text}')
+print(f'Response Code: { r2.status_code}\n{r2.text}')
+print(f'Response Code: { r3.status_code}\n{r3.text}')
+print(f'Response Code: { r4.status_code}\n{r4.text}')
+print(f'Response Code: { r5.status_code}\n{r5.text}')
+print(f'Response Code: { r6.status_code}\n{r6.text}')
+print(f'Response Code: { r7.status_code}\n{r7.text}')
+print(f'Response Code: { r8.status_code}\n{r8.text}')
+print(f'Response Code: { r9.status_code}\n{r9.text}')
+print(f'Response Code: { r10.status_code}\n{r10.text}')
+print(f'Response Code: { r11.status_code}\n{r11.text}')
+print(f'Response Code: { r12.status_code}\n{r12.text}')
+print(f'Response Code: { r13.status_code}\n{r13.text}')
+print(f'Response Code: { r14.status_code}\n{r14.text}')
+print(f'Response Code: { r15.status_code}\n{r15.text}')
+print(f'Response Code: { r16.status_code}\n{r16.text}')
+print(f'Response Code: { r17.status_code}\n{r17.text}')
+print(f'Response Code: { r18.status_code}\n{r18.text}')
+print(f'Response Code: { r19.status_code}\n{r19.text}')
+print(f'Response Code: { r20.status_code}\n{r20.text}')
+print(f'Response Code: { r21.status_code}\n{r21.text}')
+print(f'Response Code: { r22.status_code}\n{r22.text}')
+print(f'Response Code: { r23.status_code}\n{r23.text}')
+print(f'Response Code: { r24.status_code}\n{r24.text}')
+print(f'Response Code: { r25.status_code}\n{r25.text}')

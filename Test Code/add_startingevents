@@ -1,0 +1,17 @@
+import requests
+from datetime import datetime
+
+#First Event
+dateandtime1 = datetime(2021, 11, 30, 8, 30)
+event1 = {"title": "Symphonic Hollywood", "description": "Join the beloved conductor Dr. Moore as he presents some totally non-secular music in a manner that makes you question whether if you're still in a conservative university.", "priceperseat":25,"durationhours":2,"dateandtime": dateandtime1.strftime("%m/%d/%Y, %H:%M:%S")} #
+
+#Second Event
+dateandtime2 = datetime(2021,12, 1, 15, 30)
+event2 = {"title": "Mid Summer Night's Dream", "description": "Join us for an all-new production of one of Shakespeare’s most beloved comedies, A Midsummer Night’s Dream. A confused pair of young lovers, an amateur acting troupe and some feuding fairies cross paths in an enchanted forest. Chaos and hilarity ensues for “the course of true love never did run smooth.”", "priceperseat":35,"durationhours":4, "dateandtime": dateandtime2.strftime("%m/%d/%Y, %H:%M:%S")} #
+
+
+r = requests.post("http://localhost:5000/events",json=event1)
+print(f'Response Code For First Post: {r.status_code}\n{r.text}')
+
+r = requests.post("http://localhost:5000/events",json=event2)
+print(f'Response Code For Second Post: {r.status_code}\n{r.text}')
