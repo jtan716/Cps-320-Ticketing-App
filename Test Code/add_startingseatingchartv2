@@ -1,6 +1,0 @@
-import requests 
-
-seatingchart = {"seating_chart": "F1      ,        F2, F3,     F4   ,  F5   "}
-
-r1 = requests.post("http://localhost:5000/events/1/seatings",json=seatingchart)
-print(f'Response Code: {r1.status_code} \n {r1.text}')
