@@ -1,7 +1,5 @@
 # To use this, 
-# pip3 install requests flask
-# Then...
-# pip3 install flask_sqlalchemy
+# pip3 install requests flask flas_sqlalchemy eventlet flask_socketio
 
 #Source Code: Dr. Schaub's service3.py from the class examples
 
@@ -36,7 +34,8 @@ from werkzeug.exceptions import HTTPException
 from datetime import datetime
 import json, time, uuid
 from flask_sqlalchemy import SQLAlchemy
-from flask_socketio import SocketIO, send, emit
+from flask_socketio import SocketIO
+from flask_socketio import send, emit
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ticketing_app_table.sqlite3'
@@ -88,9 +87,10 @@ class Seating(db.Model):
     colid = db.Column(db.Integer, primary_key=True)
     status_held = db.Column(db.Boolean, nullable=False)
     status_reserved = db.Column(db.Boolean, nullable=False)
+    userid_reservation = db.Column(db.String(36), nullable=True)
 
     def to_dict(self):
-        return {'eventlinkid': self.eventlinkid, 'rowid': self.rowid, 'colid': self.colid,'status_held':self.status_held,'status_reserved':self.status_reserved}
+        return {'eventlinkid': self.eventlinkid, 'rowid': self.rowid, 'colid': self.colid,'status_held':self.status_held,'status_reserved':self.status_reserved,'userid_reservation': self.userid_reservation}
 
 
 '''
@@ -140,11 +140,11 @@ class Ticket(db.Model):
     userlinkid = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
     eventlinkid = db.Column(db.Integer(), db.ForeignKey('events.id'), nullable=False)
     seats_reserved = db.Column(db.String(60),nullable=False) #CAN ONLY BOOK A MAX OF 10 SEATS
-    creditcard_used = db.Column(db.Integer(),nullable=False)
+    creditcard_used = db.Column(db.String(20),nullable=False)
     total_price = db.Column(db.Float(),nullable=False)
 
     def to_dict(self):
-        return {"id":self.id,"userlinkid": self.userlinkid,"eventlinkid":self.eventlinkid,"seats_reserved":self.seats_reserved,"total_price":self.total_price}
+        return {"id":self.id,"userlinkid": self.userlinkid,"eventlinkid":self.eventlinkid,"seats_reserved":self.seats_reserved,"total_price":self.total_price,"creditcard_used":self.creditcard_used}
 '''
 END TABLE 4
 ***************************
@@ -388,7 +388,7 @@ def create_user():
             creditcard_exp_in = datetime.strptime(user_dict["creditcard_exp"],"%m/%d/%Y, %H:%M:%S")
             creditcard_cvv_in = user_dict["creditcard_cvv"]
         except:
-            "ignore error"
+            print("@ '/users' POST request: no/invalid credit card info.")
 
     except Exception as e:
         abort(400, description=f'Invalid request: {e}')
@@ -482,6 +482,7 @@ def create_userticket(user_id: str):
         for seat in seatlist_in:
             update_seat = Seating.query.filter_by(eventlinkid=seat.eventlinkid,rowid=seat.rowid, colid=seat.colid).first()
             update_seat.status_reserved = True
+            update_seat.userid_reservation = user_id
         
         db.session.commit()
 
@@ -545,5 +546,5 @@ END WEB SOCKET API CALLS
 
 # Startup Server 
 if __name__ == '__main__':
-    #app.run(host="0.0.0.0", debug=True)
-    socketio.run(app, use_reloader=True)
+    #app.run(host="0.0.0.0", debug=True) # for pretty print
+    socketio.run(app, use_reloader=True) # for client functionality
