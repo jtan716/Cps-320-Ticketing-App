@@ -83,9 +83,11 @@ class Seating(db.Model):
     eventlinkid = db.Column(db.Integer, db.ForeignKey('events.id'), primary_key=True)
     rowid = db.Column(db.String(1), primary_key=True)
     colid = db.Column(db.Integer, primary_key=True)
+    status_held = db.Column(db.Boolean, nullable=False)
+    status_reserved = db.Column(db.Boolean, nullable=False)
 
     def to_dict(self):
-        return {'eventlinkid': self.eventlinkid, 'rowid': self.rowid, 'colid': self.colid}
+        return {'eventlinkid': self.eventlinkid, 'rowid': self.rowid, 'colid': self.colid,'status_held':self.status_held,'status_reserved':self.status_reserved}
 
 
 '''
@@ -253,8 +255,9 @@ BEGIN TABLE 2 API CALLS (SEATING)
 # Validation method
 # @param: seating chart in string format "A1, A2, A3, ..." and id of event 
 # @detail: checks for proper formatting and creates list of seat records
+# @note: ONLY to be used for creation of new seating charts for events
 # @return: list of seat record objects
-def validate_seats(seatingchart:str, event_id:int):
+def validate_seatingchart_format(seatingchart:str, event_id:int):
     seatchart_list = [s.strip() for s in seatingchart.split(",")]
     seatingchart_return = []
 
@@ -268,6 +271,26 @@ def validate_seats(seatingchart:str, event_id:int):
         
     for seat in seatchart_list:
         seatingchart_return.append(Seating(eventlinkid=event_id,rowid=seat[0],colid=seat[1]))
+
+    return seatingchart_return
+
+
+# Validation method
+# @param: seating chart in string format "A1, A2, A3, ..." and id of event 
+# @detail: checks for proper formatting and creates list of seat records
+# @return: list of seat record objects
+def validate_seats(seatingchart:str, event_id:int):
+
+    seatchart_list = [s.strip() for s in seatingchart.split(",")]
+    seatingchart_return = []
+        
+    for seat in seatchart_list:
+        seat_db = Seating.query.filter_by(eventlinkid=event_id,rowid=seat[0],colid=int(seat[1])).first()
+        if seat_db is None:
+            abort(400, description=f'Seat {seat} for event id {event_id} does not exist')
+    
+    for seat in seatchart_list:
+        seatingchart_return.append(Seating(eventlinkid=event_id,rowid=seat[0],colid=int(seat[1])))
 
     return seatingchart_return
 
@@ -290,9 +313,11 @@ def create_eventseatingchart(event_id: int):
     ev = validate_event(event_id)
     try:
         seatchart_in = seating_chart_dict["seating_chart"]
-        seatchart_list = validate_seats(seatchart_in,event_id)
+        seatchart_list = validate_seatingchart_format(seatchart_in,event_id)
         
         for seat in seatchart_list:
+            seat.status_held = False
+            seat.status_reserved = False
             db.session.add(seat)
         
         db.session.commit()
@@ -441,16 +466,19 @@ def create_userticket(user_id: str):
     try: 
         eventid_in = userticket_dict["eventid"]
         seatsreq_in = userticket_dict["seats"]
-        seatlist_in = validate_seats(seatsreq_in,eventid_in)
         creditcard_in = userticket_dict["creditcardnum"]
+
         userid_in = validate_user(user_id)
         event_in = validate_event(eventid_in)
+        validate_seatingchart_format(seatsreq_in,eventid_in)
+        seatlist_in = validate_seats(seatsreq_in,eventid_in)
+        validate_seats_availability(seatlist_in)
         totalprice_in  = calculate_ticketprice(len(seatlist_in),event_in)
-
         t = Ticket(id=id_in,userlinkid=userid_in.id,eventlinkid=eventid_in,seats_reserved=seatsreq_in,creditcard_used=creditcard_in,total_price=totalprice_in)
         db.session.add(t)
         for seat in seatlist_in:
-            "TODO: change status of individual seats here"
+            update_seat = Seating.query.filter_by(eventlinkid=seat.eventlinkid,rowid=seat.rowid, colid=seat.colid).first()
+            update_seat.status_reserved = True
         
         db.session.commit()
 
@@ -461,13 +489,25 @@ def create_userticket(user_id: str):
     
     #return f'Suceessfully reserved ticket with id of {id_in}'
 
-def validate_availableseats():
-    abort(500, description=f'Not implemented yet.')
+def validate_seats_availability(chosenseats: list):
+    isInvalid = False
+    invalidSeats = ""
+    for seat in chosenseats:
+        seatstatus = Seating.query.filter_by(eventlinkid=seat.eventlinkid,rowid=seat.rowid, colid=seat.colid).first()
+        if (seatstatus.status_held == True) or (seatstatus.status_reserved == True):
+            isInvalid = True
+            invalidSeats+= str(seat.rowid) + str(seat.colid) + ","
+    
+    if isInvalid:
+        abort(400, description=f'The seats that you selected, {invalidSeats} are not available.')
+
+    return chosenseats
+
 
 def calculate_ticketprice(numseats: int, event: Event):
     if (numseats <= 0 ):
         abort(400, description=f'Cannot book 0 tickets. Must book at least 1 ticket.')
-    priceperseat = event.to_dict()["priceperseat"]
+    priceperseat = event.priceperseat
 
     return numseats * priceperseat
 

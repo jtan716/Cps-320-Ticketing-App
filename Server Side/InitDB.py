@@ -31,10 +31,10 @@ CREATE USERS
 '''
 
 user_1 = {"email": "jack@bju.edu", "password": "123456", "creditcard_num": "1234-5678-4321-8765", "creditcard_exp": datetime.datetime(2023, 4, 28).strftime("%m/%d/%Y, %H:%M:%S"), "cvv": 321}
-#uuid: a4141e98-193d-4ba9-8620-d878c8e4ec38
+#uuid: 686b3526-b087-4d24-a23c-262090a6acd9
 
 user_2 = {"email": "jane@bju.edu", "password": "654321"}
-#uuid: c6e65980-8c79-49bb-8e75-08f1358d7437
+#uuid: ee4d963a-d133-4c34-a179-f88f5f89c74f
 
 
 '''
@@ -43,7 +43,7 @@ CREATE TICKET
 ------------------
 '''
 
-ticket_1 = {"eventid": "2", "seats": "A1,A2", "creditcardnum": "1234-5678-4321-8765"}
+ticket_1 = {"eventid": "1", "seats": "A1,A2", "creditcardnum": "1234-5678-4321-8765"}
 
 
 
@@ -58,7 +58,6 @@ r5 = requests.post("http://localhost:5000/events/2/seating", json=seatingchart_2
 r6 = requests.post("http://localhost:5000/events/3/seating", json=seatingchart_3)
 r7 = requests.post("http://localhost:5000/users", json=user_1)
 r8 = requests.post("http://localhost:5000/users", json=user_2)
-r9 = requests.post("http://localhost:5000/users/a4141e98-193d-4ba9-8620-d878c8e4ec38/tickets", json=ticket_1)
 
 print(f'Response Code For Post: {r1.status_code}\n{r1.text}')
 print(f'Response Code For Post: {r2.status_code}\n{r2.text}')
@@ -68,5 +67,7 @@ print(f'Response Code For Post: {r5.status_code}\n{r5.text}')
 print(f'Response Code For Post: {r6.status_code}\n{r6.text}')
 print(f'Response Code For Post: {r7.status_code}\n{r7.text}')
 print(f'Response Code For Post: {r8.status_code}\n{r8.text}')
-print(f'Response Code For Post: {r9.status_code}\n{r9.text}')
 '''
+r9 = requests.post("http://localhost:5000/users/686b3526-b087-4d24-a23c-262090a6acd9/tickets", json=ticket_1)
+print(f'Response Code For Post: {r9.status_code}\n{r9.text}')
+
