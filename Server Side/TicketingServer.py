@@ -36,10 +36,13 @@ from werkzeug.exceptions import HTTPException
 from datetime import datetime
 import json, time, uuid
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO, send, emit
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ticketing_app_table.sqlite3'
+app.config['SECRET_KEY'] = 'secret!'
 db = SQLAlchemy(app)
+socketio = SocketIO(app, logger=True, engineio_logger=True)
 
 '''
 ***************************
@@ -517,6 +520,30 @@ END TABLE 4 API CALLS
 '''
 
 
+'''
+***************************
+BEGIN WEB SOCKET API CALLS 
+'''
+
+@socketio.on('connect')
+def on_connect(auth):
+    print('Client connected')
+    emit('jtan716', {'data': 'You are now connected to the jtan ticketing app sever.'})
+
+@socketio.on('disconnect')
+def on_disconnect():
+    print('Client disconnected')
+
+@socketio.on('greeting')
+def on_greeting(data):
+    print(f'Greeting: {data}')
+
+'''
+END WEB SOCKET API CALLS 
+***************************
+'''
+
 # Startup Server 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=True)
+    #app.run(host="0.0.0.0", debug=True)
+    socketio.run(app, use_reloader=True)
