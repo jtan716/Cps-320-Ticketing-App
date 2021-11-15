@@ -8,7 +8,12 @@
              Shell.NavBarIsVisible="False">
     <ContentPage.Content>
         <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
+            <Label Text="Username:" />
+            <Entry Keyboard="Plain" Text="{Binding InputEmail}"/>
+            <Label Text="Password:" />
+            <Entry Keyboard="Plain" IsPassword="True" Text="{Binding InputPassword}"/>
             <Button VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}"/>
+            <Label Text="{Binding Message}" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
