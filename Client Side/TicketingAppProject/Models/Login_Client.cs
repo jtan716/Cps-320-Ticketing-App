@@ -1,3 +1,5 @@
+using SocketIOClient;
+
 namespace TicketingAppProject.Models
 {
     public class Login_Client
@@ -10,5 +12,6 @@ namespace TicketingAppProject.Models
         
         public string loginPassword { get; set; }
         
+        public string loginUserID { get; set; }
     }
 }

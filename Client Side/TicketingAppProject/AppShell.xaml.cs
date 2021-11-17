@@ -11,8 +11,8 @@ namespace TicketingAppProject
         public AppShell()
         {
             InitializeComponent();
-            Routing.RegisterRoute(nameof(ItemDetailPage), typeof(ItemDetailPage));
-            Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
+            Routing.RegisterRoute(nameof(EventListPage), typeof(EventListPage));
+            Routing.RegisterRoute(nameof(UserProfilePage),typeof(UserProfilePage));
         }
 
         private async void OnMenuItemClicked(object sender, EventArgs e)

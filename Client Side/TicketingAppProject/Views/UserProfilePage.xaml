@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:TicketingAppProject.ViewModels;assembly=TicketingAppProject"
+             x:DataType="viewModels:UserProfileViewModel"
+             x:Class="TicketingAppProject.Views.UserProfilePage"
+             Title="User Profile">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Email:" />
+            <Label Text="{Binding UserEmail}" />
+            <Label Text="Password:" />
+            <Label Text="{Binding UserPassword}"/> 
+            <Label Text="Credit Card No:" />
+            <Label Text="{Binding UserCreditCardNumber}" />
+            <Label Text="Credit Card Exp Date:" />
+            <Label Text="{Binding UserCreditCardExpDate}" />
+            <Label Text="Credit Card CVV:" />
+            <Label Text="{Binding UserCreditCardCVV}" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

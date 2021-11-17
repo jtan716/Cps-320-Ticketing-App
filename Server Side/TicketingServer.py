@@ -4,7 +4,6 @@
 #Source Code: Dr. Schaub's service3.py from the class examples
 
 #TODO List (Deliverable 1): 
-# Create ticket
 # Generate Test Casees with blank db
 # Comment header for all methods (parameters, return type)
 
@@ -16,9 +15,11 @@
 # Better Validation 
 # Admin operation validation 
 # Session ID for user login 
+# Use python decorators
+# Use cookies to verify user sessions instead of passing id through body
 
 #For User Table...
-    #store passwords in a more secure manner
+    #store passwords in a more secure manner (hashlib)
     #notify that only Visa, MasterCard, and Discover and valid credit cards
     #have client code store cvv and expiration date
 
@@ -359,6 +360,23 @@ def get_allusers():
     users = User.query.all()
     return jsonify([user.to_dict_secure() for user in users])
 
+# HTTP Request 
+@app.route("/users/login", methods=['POST'])
+def create_userloginsession():
+    login_dict = request.get_json()
+    print("Login attempt with data: " + json.dumps(login_dict))
+    try:
+        email_in = login_dict["email"]
+        password_in = login_dict["password"]
+        login_user = User.query.filter_by(email=email_in,password=password_in).first()
+
+        if (login_user is None): 
+            abort(404, description='f{No such user with password was found.}')
+
+        return login_user.id
+
+    except Exception as e:
+        abort(400, description=f'Invalid request: {e}')
 
 # HTTP Request
 # @param: id of user
@@ -546,5 +564,5 @@ END WEB SOCKET API CALLS
 
 # Startup Server 
 if __name__ == '__main__':
-    #app.run(host="0.0.0.0", debug=True) # for pretty print
-    socketio.run(app, use_reloader=True) # for client functionality
+    app.run(host="0.0.0.0", debug=True) # for pretty print
+    #socketio.run(app, use_reloader=True) # for client functionality

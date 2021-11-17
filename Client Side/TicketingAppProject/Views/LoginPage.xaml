@@ -5,15 +5,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="TicketingAppProject.Views.LoginPage"
+             xmlns:viewModels="clr-namespace:TicketingAppProject.ViewModels;assembly=TicketingAppProject"
+             x:DataType="viewModels:LoginViewModelM"
              Shell.NavBarIsVisible="False">
     <ContentPage.Content>
         <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
-            <Label Text="Username:" />
+            <Label Text="Email:" />
             <Entry Keyboard="Plain" Text="{Binding InputEmail}"/>
             <Label Text="Password:" />
             <Entry Keyboard="Plain" IsPassword="True" Text="{Binding InputPassword}"/>
             <Button VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}"/>
             <Label Text="{Binding Message}" />
+            <ActivityIndicator></ActivityIndicator>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -1,5 +1,9 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Flurl.Http;
 using TicketingAppProject.Models;
+using TicketingAppProject.Services;
 using TicketingAppProject.Views;
 using Xamarin.Forms;
 
@@ -14,8 +18,9 @@ namespace TicketingAppProject.ViewModels
             InputPassword = myLoginClient.loginPassword;
             LoginCommand = new Command(OnLoginClicked);
         }
-
+        
         private Login_Client MyLoginClient;
+        private CancellationTokenSource cancelSource;
         public Command LoginCommand { get; }
 
         private string _inputEmail;
@@ -42,6 +47,8 @@ namespace TicketingAppProject.ViewModels
         public string UserEmail => MyLoginClient.loginEmail;
         public string UserPassword => MyLoginClient.loginPassword;
 
+        public string UserID => MyLoginClient.loginUserID;
+
         public bool ValidateUsernamePasswordFormat()
         {
             //email username field must be non-empty and have the character '@'
@@ -67,16 +74,48 @@ namespace TicketingAppProject.ViewModels
             
             OnPropertyChanged(nameof(UserEmail));
             OnPropertyChanged(nameof(UserPassword));
+            OnPropertyChanged(nameof(UserID));
 
             return isValid;
+        }
+
+        private async Task<bool> HTTPLoginRequest()
+        {
+            Message = "";
+            Console.WriteLine("@Debug: Executing HTTPLoginRequest().");
+            bool success = false;
+            try
+            {
+                MyLoginClient.loginUserID =
+                    await URL_Server.getURLLogin().PostJsonAsync(new {email = InputEmail, password = InputPassword})
+                        .ReceiveString();
+                //TODO: figure out better implementation
+                User_Server.loggedinUserID = MyLoginClient.loginUserID;
+                Console.WriteLine("@Debug: received " + MyLoginClient.loginUserID);
+                success = true;
+                Console.WriteLine("@Debug: Successful HTTP Request.");
+            }
+            catch (FlurlHttpException httpex)
+            {
+                var apiError = await httpex.GetResponseJsonAsync<APIError>();
+                Message = apiError.Error;
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                Message = ex.Message;
+                Console.WriteLine("@Debug: " + ex.GetType() + " at HTTPLoginRequest(), " + ex.Message);
+            }
+            Console.WriteLine("@Debug: HTTPLoginRequest() returned "+ success);
+            return success;
         }
         
         private async void OnLoginClicked(object obj)
         {
-            if (ValidateUsernamePasswordFormat())
+            if (ValidateUsernamePasswordFormat() && await HTTPLoginRequest())
             {
                 // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-                await Shell.Current.GoToAsync($"//{nameof(AboutPage)}");
+                await Shell.Current.GoToAsync($"//{nameof(EventListPage)}");
             }
         }
     }
