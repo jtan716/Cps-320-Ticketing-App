@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:TicketingAppProject.ViewModels;assembly=TicketingAppProject"
+             x:DataType="viewModels:TicketListViewModel"
+             x:Class="TicketingAppProject.Views.TicketListPage">
+    
+    <ContentPage.Content>
+        <StackLayout>
+            <ListView
+                x:Name="ListViewTickets"
+                ItemsSource="{Binding MappedTicketCollection.TargetCollection}"
+                RowHeight="200">
+                
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="viewModels:TicketViewModel">
+                        <ViewCell>
+                            <StackLayout Padding="10">
+                                <Label Text="{Binding TicketEventTitle}" FontAttributes="Bold"/>
+                                <Label Text="Seats Reserved:" />
+                                <Label Text="{Binding TicketSeatsReserved}" />
+                                <Label Text="Total Price Paid:" />
+                                <Label Text="{Binding TicketTotalPrice}" />
+                                <Label Text="Credit Card Used:" />
+                                <Label Text="{Binding TicketCreditCardUsed}" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -14,6 +14,11 @@ namespace TicketingAppProject.ViewModels
         public LoginViewModelM(Login_Client myLoginClient)
         {
             this.MyLoginClient = myLoginClient;
+            
+            //TODO REMOVE ONCE FINISHED
+            myLoginClient.loginEmail = "jack@bju.edu";
+            myLoginClient.loginPassword = "123456";
+            
             InputEmail = myLoginClient.loginEmail;
             InputPassword = myLoginClient.loginPassword;
             LoginCommand = new Command(OnLoginClicked);
@@ -97,9 +102,21 @@ namespace TicketingAppProject.ViewModels
             }
             catch (FlurlHttpException httpex)
             {
-                var apiError = await httpex.GetResponseJsonAsync<APIError>();
-                Message = apiError.Error;
+                string connectionError = httpex.Message;
+                Console.WriteLine($"@Debug: FlurlHTTPException message: {connectionError}");
+                
+                //For iOS 
+                if (connectionError.Contains("Connection refused"))
+                {
+                    Message = "Connection Error: could not find a connection. Please try again later.";
+                }
+                else
+                {
+                    var apiError = await httpex.GetResponseJsonAsync<APIError>();
+                    Message = apiError.Error;
+                }
             }
+
             catch (Exception ex)
             {
                 success = false;

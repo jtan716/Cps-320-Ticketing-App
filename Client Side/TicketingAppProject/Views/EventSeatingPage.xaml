@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TicketingAppProject.Views.EventSeatingPage"
+             xmlns:viewModel="clr-namespace:TicketingAppProject.ViewModels;assembly=TicketingAppProject"
+             x:DataType="viewModel:EventSeatingViewModel"
+             Title="{Binding EventTitle}"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="true">
+    
+    
+    <ContentPage.Content>
+        <StackLayout Padding="20" x:Name="EventSeatingPageLayout">
+            <Label Text="{Binding EventDescription}" />
+            <Label Text="{Binding EventPricePerSeat}" />
+            <Label Text="{Binding EventDurationInHours}" />
+            <Label Text="{Binding EventStartDateTime}" />
+            <Grid x:Name="EventSeatingGrid" HorizontalOptions="Center" VerticalOptions="Center"/>
+            <Button x:Name="CheckOutButton" Padding="10" HorizontalOptions="Center" Text="Check Out Seats" Clicked="CheckOutButton_OnClicked"/>
+            <Label Text="{Binding Message}" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

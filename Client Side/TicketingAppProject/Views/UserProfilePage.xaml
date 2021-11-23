@@ -8,15 +8,10 @@
              Title="User Profile">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Email:" />
             <Label Text="{Binding UserEmail}" />
-            <Label Text="Password:" />
             <Label Text="{Binding UserPassword}"/> 
-            <Label Text="Credit Card No:" />
             <Label Text="{Binding UserCreditCardNumber}" />
-            <Label Text="Credit Card Exp Date:" />
             <Label Text="{Binding UserCreditCardExpDate}" />
-            <Label Text="Credit Card CVV:" />
             <Label Text="{Binding UserCreditCardCVV}" />
         </StackLayout>
     </ContentPage.Content>

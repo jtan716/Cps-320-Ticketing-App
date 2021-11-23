@@ -87,6 +87,9 @@
     <FlyoutItem Title="User Profile" Icon="icon_about.png">
         <ShellContent Route="UserProfilePage" ContentTemplate="{DataTemplate local:UserProfilePage}" />
     </FlyoutItem>
+    <FlyoutItem Title="My Tickets" Icon="icon_feed.png">
+        <ShellContent Route="TicketListPage" ContentTemplate="{DataTemplate local:TicketListPage}" />
+    </FlyoutItem>
     <FlyoutItem Title="Logout">
         <ShellContent Route="LoginPage" ContentTemplate="{DataTemplate local:LoginPage}" />
     </FlyoutItem>

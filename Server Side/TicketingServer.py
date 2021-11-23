@@ -33,7 +33,7 @@
 from flask import Flask, request, abort, jsonify, Response
 from werkzeug.exceptions import HTTPException
 from datetime import datetime
-import json, time, uuid
+import json, time, uuid, hashlib
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 from flask_socketio import send, emit
@@ -43,6 +43,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ticketing_app_table.sqlite3'
 app.config['SECRET_KEY'] = 'secret!'
 db = SQLAlchemy(app)
 socketio = SocketIO(app, logger=True, engineio_logger=True)
+salt = "mysaltsecret"
 
 '''
 ***************************
@@ -140,12 +141,13 @@ class Ticket(db.Model):
     id = db.Column(db.String(36), primary_key=True) #STORE AS UUID
     userlinkid = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
     eventlinkid = db.Column(db.Integer(), db.ForeignKey('events.id'), nullable=False)
+    eventtitle = db.Column(db.String(40), nullable=False)
     seats_reserved = db.Column(db.String(60),nullable=False) #CAN ONLY BOOK A MAX OF 10 SEATS
     creditcard_used = db.Column(db.String(20),nullable=False)
     total_price = db.Column(db.Float(),nullable=False)
 
     def to_dict(self):
-        return {"id":self.id,"userlinkid": self.userlinkid,"eventlinkid":self.eventlinkid,"seats_reserved":self.seats_reserved,"total_price":self.total_price,"creditcard_used":self.creditcard_used}
+        return {"id":self.id,"userlinkid": self.userlinkid,"eventlinkid":self.eventlinkid,"eventtitle":self.eventtitle,"seats_reserved":self.seats_reserved,"total_price":self.total_price,"creditcard_used":self.creditcard_used}
 '''
 END TABLE 4
 ***************************
@@ -276,6 +278,9 @@ def validate_seatingchart_format(seatingchart:str, event_id:int):
     for seat in seatchart_list:
         seatingchart_return.append(Seating(eventlinkid=event_id,rowid=seat[0],colid=seat[1]))
 
+    if not seatingchart_return:
+        abort(400, description=f'Input Seats are empty. Please make requests with non-empty seats.')
+
     return seatingchart_return
 
 
@@ -331,6 +336,29 @@ def create_eventseatingchart(event_id: int):
 
     return f'Successfully creating seating chart for event {event_id} with seats {seatchart_in}'
 
+@app.route("/events/<int:event_id>/seating", methods=['PUT'])
+def hold_selectedseats(event_id: int):
+    selected_seats_dict = request.get_json()
+    ev = validate_event(event_id)
+    try:
+        userid_in = selected_seats_dict["userid"]
+        selected_seats_in = selected_seats_dict["selectedseats"]
+
+        validate_user(userid_in)
+        seat_list = validate_seatingchart_format(selected_seats_in, event_id)
+        validate_seats_availability(seat_list)
+
+        for seat in seat_list:
+            update_seat = Seating.query.filter_by(eventlinkid=seat.eventlinkid,rowid=seat.rowid, colid=seat.colid).first()
+            update_seat.status_held = True
+
+        db.session.commit()
+
+    except Exception as e: 
+        abort(400, description=f'Invalid request: {e}')
+
+    return f'Successfully held seats {selected_seats_in} for event {ev.title}.'
+
 
 '''
 END TABLE 2 API CALLS
@@ -353,6 +381,10 @@ def validate_user(user_id: str):
         abort(404, description=f'No user with id {user_id} exists')
     return user
 
+def hash_password(password_in: str):
+    global salt
+    return hashlib.sha256(bytes(salt+password_in,"ascii")).hexdigest()
+
 # HTTP Request
 # @return: list of users in the db
 @app.route("/users", methods=['GET'])
@@ -367,11 +399,11 @@ def create_userloginsession():
     print("Login attempt with data: " + json.dumps(login_dict))
     try:
         email_in = login_dict["email"]
-        password_in = login_dict["password"]
+        password_in = hash_password(login_dict["password"])
         login_user = User.query.filter_by(email=email_in,password=password_in).first()
 
         if (login_user is None): 
-            abort(404, description='f{No such user with password was found.}')
+            abort(404, description=f'Username or password was wrong.')
 
         return login_user.id
 
@@ -384,7 +416,6 @@ def create_userloginsession():
 @app.route("/users/<user_id>", methods=['GET'])
 def get_userinfo(user_id: str):
     user_in = validate_user(user_id)
-    
     return jsonify(user_in.to_dict_all())
 
 # HTTP Request (ADMIN)
@@ -397,7 +428,7 @@ def create_user():
     try: 
         id_in = str(uuid.uuid4())
         email_in = user_dict["email"]
-        password_in = user_dict["password"]
+        password_in = hash_password(user_dict["password"])
         creditcard_num_in = None
         creditcard_exp_in = None
         creditcard_cvv_in = None
@@ -495,7 +526,7 @@ def create_userticket(user_id: str):
         seatlist_in = validate_seats(seatsreq_in,eventid_in)
         validate_seats_availability(seatlist_in)
         totalprice_in  = calculate_ticketprice(len(seatlist_in),event_in)
-        t = Ticket(id=id_in,userlinkid=userid_in.id,eventlinkid=eventid_in,seats_reserved=seatsreq_in,creditcard_used=creditcard_in,total_price=totalprice_in)
+        t = Ticket(id=id_in,userlinkid=userid_in.id,eventlinkid=eventid_in,eventtitle=event_in.title,seats_reserved=seatsreq_in,creditcard_used=creditcard_in,total_price=totalprice_in)
         db.session.add(t)
         for seat in seatlist_in:
             update_seat = Seating.query.filter_by(eventlinkid=seat.eventlinkid,rowid=seat.rowid, colid=seat.colid).first()
@@ -542,6 +573,7 @@ END TABLE 4 API CALLS
 '''
 ***************************
 BEGIN WEB SOCKET API CALLS 
+NOT USED
 '''
 
 @socketio.on('connect')

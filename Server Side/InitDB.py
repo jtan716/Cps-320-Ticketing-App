@@ -31,10 +31,10 @@ CREATE USERS
 '''
 
 user_1 = {"email": "jack@bju.edu", "password": "123456", "creditcard_num": "1234-5678-4321-8765", "creditcard_exp": datetime.datetime(2023, 4, 28).strftime("%m/%d/%Y, %H:%M:%S"), "creditcard_cvv": 321}
-#uuid: 8f1582a9-2fba-4b2c-8844-cf7e045307a9
+#uuid: cd403896-fb20-489a-b52b-491746d7b74e
 
 user_2 = {"email": "jane@bju.edu", "password": "654321"}
-#uuid: 0bae42b5-d0cd-4f6e-8a39-3fb51d3c2325
+#uuid: 9331d32f-c283-4c09-83f3-7e85c5bfb303
 
 
 '''
@@ -67,9 +67,10 @@ print(f'Response Code For Post: {r5.status_code}\n{r5.text}')
 print(f'Response Code For Post: {r6.status_code}\n{r6.text}')
 print(f'Response Code For Post: {r7.status_code}\n{r7.text}')
 print(f'Response Code For Post: {r8.status_code}\n{r8.text}')
+
 '''
 
-r9 = requests.post("http://localhost:5000/users/8f1582a9-2fba-4b2c-8844-cf7e045307a9/tickets", json=ticket_1)
+r9 = requests.post("http://localhost:5000/users/cd403896-fb20-489a-b52b-491746d7b74e/tickets", json=ticket_1)
 print(f'Response Code For Post: {r9.status_code}\n{r9.text}')
 
 

@@ -13,6 +13,9 @@ namespace TicketingAppProject.Models
         [JsonProperty("eventlinkid")]
         public int ticketEventIDAssociation { get; set; }
         
+        [JsonProperty("eventtitle")]
+        public string ticketEventTitle { get; set; }
+        
         [JsonProperty("seats_reserved")]
         public string ticketSeatsReserved { get; set; }
         
@@ -20,6 +23,6 @@ namespace TicketingAppProject.Models
         public string ticketCreditCardNumberUsed { get; set; }
         
         [JsonProperty("total_price")]
-        public int ticketTotalPrice { get; set; }
+        public float ticketTotalPrice { get; set; }
     }
 }

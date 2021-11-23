@@ -23,8 +23,7 @@ namespace TicketingAppProject.Models
         
         [JsonProperty("dateandtime")]
         public DateTime eventStartDateAndTime { get; set; }
-        
-        public List<Seat_Server> eventSeatingChart { get; set; }
-        
+
+        public bool is_selected_by_user { get; set; }
     }
 }

@@ -2,19 +2,22 @@ using System;
 using System.Collections.Generic;
 using Flurl.Http;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using TicketingAppProject.Models;
 using TicketingAppProject.Services;
+using TicketingAppProject.Views;
+using Xamarin.Forms;
 
 namespace TicketingAppProject.ViewModels
 {
-    public class EventListViewModel
+    public class EventListViewModel: BaseViewModel
     {
-        public MappedObservableCollection<Event_Server, EventViewModel> MappedEventCollection { get; }
+        public MappedObservableCollection<Event_Server, EventSeatingViewModel> MappedEventCollection { get; }
 
         public EventListViewModel()
         {
-            MappedEventCollection = new MappedObservableCollection<Event_Server, EventViewModel>(
-                myevent => new EventViewModel(myevent),
+            MappedEventCollection = new MappedObservableCollection<Event_Server, EventSeatingViewModel>(
+                myevent => new EventSeatingViewModel(myevent),
                 EventCollection.Instance.Events);
         }
 
@@ -26,7 +29,6 @@ namespace TicketingAppProject.ViewModels
                 EventCollection.Instance.Events.Clear();
                 foreach (Event_Server myevent in events)
                 {
-                    Console.WriteLine($"@Debug!: HTTPGetEventList() called: event -> {myevent.eventTitle}");
                     EventCollection.Instance.AddEvent(myevent);
                 }
             }
@@ -35,5 +37,6 @@ namespace TicketingAppProject.ViewModels
                 Console.WriteLine($"@Debug!: {ex.GetType()} Error at HTTPGetEventList() : {ex.Message}");
             }
         }
+
     }
 }

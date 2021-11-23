@@ -18,6 +18,8 @@ namespace TicketingAppProject.Models
         
         [JsonProperty("status_reserved")]
         public bool status_reserved { get; set; }
+
+        public bool is_selected_by_user { get; set; }
         
     }
 }

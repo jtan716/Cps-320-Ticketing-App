@@ -5,6 +5,8 @@
              xmlns:viewModels="clr-namespace:TicketingAppProject.ViewModels;assembly=TicketingAppProject"
              x:DataType="viewModels:EventListViewModel"
              x:Class="TicketingAppProject.Views.EventListPage"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="true"
              >
     <ContentPage.Content>
         <StackLayout>
@@ -23,11 +25,11 @@
             <ListView
                 x:Name="ListViewEvents"
                 ItemsSource="{Binding MappedEventCollection.TargetCollection}"
+                ItemTapped="EventEntry_ItemTapped"
                 RowHeight="90"
                 >
-                
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="viewModels:EventViewModel">
+                    <DataTemplate x:DataType="viewModels:EventSeatingViewModel">
                         <ViewCell>
                             <StackLayout Padding="10">
                                 <Label Text="{Binding   EventTitle}" />
@@ -37,7 +39,6 @@
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-                
             </ListView>
             
         </StackLayout>
