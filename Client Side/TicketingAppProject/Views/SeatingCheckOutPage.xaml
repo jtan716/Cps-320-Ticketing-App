@@ -24,6 +24,7 @@
             <Label Text="{Binding TotalPrice}" />
             
             <Button x:Name="PurchaseButton" VerticalOptions="Center" Text="Buy Ticket" Clicked="PurchaseButton_OnClicked"/>
+            <Button x:Name="TestConButton" VerticalOptions="Center" Text="Test Concurrency" Clicked="TestConButton_OnClicked" />
             
             <Label Text = "{Binding Message}" />
         </StackLayout>

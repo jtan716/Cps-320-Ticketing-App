@@ -107,6 +107,22 @@ namespace TicketingAppProject.ViewModels
             return success;
         }
 
+        //TO BE DELETED
+        public async Task TestConcurrency()
+        {
+            ReserveRequest myReserveRequest = new ReserveRequest();
+            myReserveRequest.eventid = MyEvent.eventID;
+            myReserveRequest.seats = SelectedSeats;
+            myReserveRequest.creditcardnum = CreditCardNum;
+            
+            //TEST CODE 
+            Task t1 = Task.Run(() => URL_Server.getURLReserveSeats().WithCookie("loginsession",User_Server.loggedinSessionID).PostJsonAsync(myReserveRequest)
+                .ReceiveJson<Ticket_Server>());
+            Task t2 = Task.Run(() => URL_Server.getURLReserveSeats()
+                .WithCookie("loginsession", User_Server.loggedinSessionID).PostJsonAsync(myReserveRequest)
+                .ReceiveJson<Ticket_Server>());
+        }
+
     }
     
     internal class ReserveRequest

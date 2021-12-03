@@ -418,13 +418,13 @@ def hold_selectedseats(event_id: int):
         with lock:
             validate_seats_hold_availability(seat_list)
 
-        for seat in seat_list:
-            update_seat = Seating.query.filter_by(eventlinkid=seat.eventlinkid,rowid=seat.rowid, colid=seat.colid).first()
-            update_seat.userid_heldby = myloginsession.userlinkid
-            update_seat.status_held = True
-            update_seat.expiration_hold_date = expiration_date_in
+            for seat in seat_list:
+                update_seat = Seating.query.filter_by(eventlinkid=seat.eventlinkid,rowid=seat.rowid, colid=seat.colid).first()
+                update_seat.userid_heldby = myloginsession.userlinkid
+                update_seat.status_held = True
+                update_seat.expiration_hold_date = expiration_date_in
 
-        db.session.commit()
+            db.session.commit()
 
         totalprice_in  = calculate_ticketprice(len(seat_list),ev)
         return str(totalprice_in)
@@ -640,15 +640,16 @@ def create_userticket():
         with lock:
             validate_seats_reserve_availability(seatlist_in,myloginsession.userlinkid)
 
-        totalprice_in  = calculate_ticketprice(len(seatlist_in),event_in)
-        t = Ticket(id=id_in,userlinkid=userid_in.id,eventlinkid=eventid_in,eventtitle=event_in.title,seats_reserved=seatsreq_in,creditcard_used=creditcard_in,total_price=totalprice_in)
-        db.session.add(t)
-        for seat in seatlist_in:
-            update_seat = Seating.query.filter_by(eventlinkid=seat.eventlinkid,rowid=seat.rowid, colid=seat.colid).first()
-            update_seat.status_reserved = True
-            update_seat.userid_reservation = myloginsession.userlinkid
-        
-        db.session.commit()
+            totalprice_in  = calculate_ticketprice(len(seatlist_in),event_in)
+            t = Ticket(id=id_in,userlinkid=userid_in.id,eventlinkid=eventid_in,eventtitle=event_in.title,seats_reserved=seatsreq_in,creditcard_used=creditcard_in,total_price=totalprice_in)
+            db.session.add(t)
+
+            for seat in seatlist_in:
+                update_seat = Seating.query.filter_by(eventlinkid=seat.eventlinkid,rowid=seat.rowid, colid=seat.colid).first()
+                update_seat.status_reserved = True
+                update_seat.userid_reservation = myloginsession.userlinkid
+            
+            db.session.commit()
 
         return jsonify(t.to_dict())
 

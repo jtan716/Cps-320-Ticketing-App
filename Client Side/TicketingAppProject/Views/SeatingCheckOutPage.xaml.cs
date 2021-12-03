@@ -27,5 +27,10 @@ namespace TicketingAppProject.Views
                 await Shell.Current.GoToAsync($"//{nameof(TicketListPage)}");
             }
         }
+
+        private void TestConButton_OnClicked(object sender, EventArgs e)
+        {
+            (BindingContext as SeatingCheckOutViewModel).TestConcurrency();
+        }
     }
 }

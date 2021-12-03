@@ -108,5 +108,10 @@ namespace TicketingAppProject.Views
             }
             */
         }
+
+        private void TestConButton_OnClicked(object sender, EventArgs e)
+        {
+            (BindingContext as EventSeatingViewModel).TestConcurrencyHoldFunction();
+        }
     }
 }

@@ -157,8 +157,47 @@ namespace TicketingAppProject.ViewModels
             }
             return success;
         }
+        
+        public async Task TestConcurrencyHoldFunction()
+        {
+            HoldRequest newHold = new HoldRequest();
+            newHold.userid = User_Server.loggedinSessionID;
+            newHold.selectedseats = "";
+            
+            //Get selected seats from the grid one by one
+            for (int i = 0; i < SeatingChart.GetLength(0); i++)
+            {
+                for (int j = 0; j < SeatingChart.GetLength(1); j++)
+                {
+                    if (SeatingChart[i, j]!=null && SeatingChart[i, j].is_selected_by_user == true)
+                    {
+                        string selectedSeatID = SeatingChart[i, j].seatRowID + SeatingChart[i, j].seatColID;
+                        newHold.selectedseats += selectedSeatID + ",";
+                    }
+                }
+            }
+            
+            if (String.IsNullOrEmpty(newHold.selectedseats))
+            {
+                //TODO Implement error dialogue 
+                Console.WriteLine("!@Debug!: HTTPPutSeatingReservation() Please select seats to hold!");
+            }
+            //Trim off the comma at the end
+            else
+            {
+                newHold.selectedseats = newHold.selectedseats.Substring(0, newHold.selectedseats.Length - 1);
+            }
+            
+            Task t1 = Task.Run(() =>
+                URL_Server.getURLPutHoldOnSeats(MyEvent.eventID)
+                    .WithCookie("loginsession", User_Server.loggedinSessionID).PutJsonAsync(newHold));
+            Task t2 = Task.Run(() =>
+                URL_Server.getURLPutHoldOnSeats(MyEvent.eventID)
+                    .WithCookie("loginsession", User_Server.loggedinSessionID).PutJsonAsync(newHold));
+        }
 
     }
+    
 
     internal class HoldRequest
     {

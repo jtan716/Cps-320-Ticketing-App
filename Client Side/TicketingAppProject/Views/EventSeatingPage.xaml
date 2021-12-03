@@ -17,6 +17,7 @@
             <Label Text="{Binding EventStartDateTime}" />
             <Grid x:Name="EventSeatingGrid" HorizontalOptions="Center" VerticalOptions="Center"/>
             <Button x:Name="CheckOutButton" Padding="10" HorizontalOptions="Center" Text="Check Out Seats" Clicked="CheckOutButton_OnClicked"/>
+            <Button x:Name="TestConButton" Padding="10" HorizontalOptions="Center" Text="Test Concurrency" Clicked="TestConButton_OnClicked" />
             
             <StackLayout Orientation="Horizontal" Padding="20">
                 <Label Text="Available:" VerticalTextAlignment ="Center"/>
