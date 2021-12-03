@@ -17,7 +17,7 @@ event_3 = {"title": "Symphonic Wind Band", "description": "Begin your Christmas 
 CREATE SEAT CHARTS
 ------------------
 '''
-seatingchart_1 = {"seating_chart": "A1, A2, A3, B1, B2, B3, C1, C2, C3"}
+seatingchart_1 = {"seating_chart": "A1, A2, A3, B1, B2, B3, C1, C2, C3, D1"}
 
 seatingchart_2 = {"seating_chart": "A1, A2, A3, A4, B1, B2, B3, B4, C1, C2, C3, C4, D1, D2, D3, D4"}
 
@@ -37,19 +37,10 @@ user_2 = {"email": "jane@bju.edu", "password": "654321"}
 #uuid: 9331d32f-c283-4c09-83f3-7e85c5bfb303
 
 
-'''
-------------------
-CREATE TICKET
-------------------
-'''
-
-ticket_1 = {"eventid": "1", "seats": "A1,A2", "creditcardnum": "1234-5678-4321-8765"}
-
-
 
 
 #Uncomment code below to insert initial records into a blank db
-'''
+
 r1 = requests.post("http://localhost:5000/events",json=event_1)
 r2 = requests.post("http://localhost:5000/events",json=event_2)
 r3 = requests.post("http://localhost:5000/events",json=event_3)
@@ -68,9 +59,6 @@ print(f'Response Code For Post: {r6.status_code}\n{r6.text}')
 print(f'Response Code For Post: {r7.status_code}\n{r7.text}')
 print(f'Response Code For Post: {r8.status_code}\n{r8.text}')
 
-'''
 
-r9 = requests.post("http://localhost:5000/users/cd403896-fb20-489a-b52b-491746d7b74e/tickets", json=ticket_1)
-print(f'Response Code For Post: {r9.status_code}\n{r9.text}')
 
 

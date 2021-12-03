@@ -10,14 +10,14 @@ namespace TicketingAppProject.Models
             return $"http://{addressLocal}:5000/users/login";
         }
 
-        public static string getURLUserProfile(string userid)
+        public static string getURLUserProfile()
         {
-            return $"http://{addressLocal}:5000/users/{userid}";
+            return $"http://{addressLocal}:5000/users/myprofile";
         }
 
-        public static string getURLUserTickets(string userid)
+        public static string getURLUserTickets()
         {
-            return $"http://{addressLocal}:5000/users/{userid}/tickets";
+            return $"http://{addressLocal}:5000/users/myprofile/tickets";
         }
 
         public static string getURLEventList()
@@ -34,6 +34,11 @@ namespace TicketingAppProject.Models
         {
             return $"http://{addressLocal}:5000/events/{eventID}/seating";
         }
-        
+
+        public static string getURLReserveSeats()
+        {
+            return $"http://{addressLocal}:5000/users/myprofile/tickets";
+        }
+
     }
 }

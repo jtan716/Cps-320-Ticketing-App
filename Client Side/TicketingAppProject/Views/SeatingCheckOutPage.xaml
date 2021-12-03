@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModel="clr-namespace:TicketingAppProject.ViewModels;assembly=TicketingAppProject"
+             x:DataType="viewModel:SeatingCheckOutViewModel"
+             x:Class="TicketingAppProject.Views.SeatingCheckOutPage"
+             Title="Confirm Purchase">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Event Title:" />
+            <Label Text="{Binding EventTitle}" />
+            <Label Text="Description:" />
+            <Label Text="{Binding EventDescription}" />
+            <Label Text="Duration" />
+            <Label Text="{Binding EventDurationInHours}" />
+            <Label Text="Start Date and Time:" />
+            <Label Text="{Binding EventStartDateTime}" />
+            <Label Text="Credit Card No.:" />
+            <Label Text="{Binding CreditCardNum}" />
+            <Label Text="Selected Seats:" /> 
+            <Label Text="{Binding  SelectedSeats}" />
+            <Label Text ="Total Price: " />
+            <Label Text="{Binding TotalPrice}" />
+            
+            <Button x:Name="PurchaseButton" VerticalOptions="Center" Text="Buy Ticket" Clicked="PurchaseButton_OnClicked"/>
+            
+            <Label Text = "{Binding Message}" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

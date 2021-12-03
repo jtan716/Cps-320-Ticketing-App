@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 using TicketingAppProject.Models;
 using Newtonsoft.Json.Linq;
 using TicketingAppProject.Services;
+using TicketingAppProject.Views;
+using Xamarin.Forms;
 
 namespace TicketingAppProject.ViewModels
 {
@@ -24,13 +26,11 @@ namespace TicketingAppProject.ViewModels
 
         public string EventTitle => MyEvent.eventTitle;
 
-        public string EventDescription => MyEvent.eventDescription;
+        public string EventPricePerSeat => "Price per seat: $"+ MyEvent.eventPricePerSeat.ToString("0.00");
 
-        public string EventPricePerSeat => "$"+ MyEvent.eventPricePerSeat.ToString("0.00");
+        public string EventDurationInHours => "Duration: " + MyEvent.eventDurationInHours.ToString("0.00") + " hours.";
 
-        public string EventDurationInHours => MyEvent.eventDurationInHours.ToString("0.00") + " hours.";
-
-        public string EventStartDateTime => MyEvent.eventStartDateAndTime.ToString("dddd, dd MMMM yyyy");
+        public string EventStartDateTime => "Duration Start Time: " +  MyEvent.eventStartDateAndTime.ToString("dddd, dd MMMM yyyy");
         
         private string _message;
         public string Message
@@ -53,7 +53,7 @@ namespace TicketingAppProject.ViewModels
         {
             try
             {
-                EventSeatList = await URL_Server.getURLEventSeatingChart(MyEvent.eventID).GetJsonAsync<List<Seat_Server>>();
+                EventSeatList = await URL_Server.getURLEventSeatingChart(MyEvent.eventID).WithCookie("loginsession",User_Server.loggedinSessionID).GetJsonAsync<List<Seat_Server>>();
                 //TODO MOD UNFINISHED CODE BELOW
                 int maxRowValue = 65; //Unicode value for starting row character 'A'
                 int maxColValue = 1; //Min value for starting col number 1
@@ -88,17 +88,20 @@ namespace TicketingAppProject.ViewModels
             }
         }
 
-        public async Task HTTPPutSeatingReservation()
+        public async Task<bool> HTTPPutSeatingReservation()
         {
+            Message = "";
+            bool success = false;
             HoldRequest newHold = new HoldRequest();
-            newHold.userid = User_Server.loggedinUserID;
+            newHold.userid = User_Server.loggedinSessionID;
             newHold.selectedseats = "";
             
+            //Get selected seats from the grid one by one
             for (int i = 0; i < SeatingChart.GetLength(0); i++)
             {
                 for (int j = 0; j < SeatingChart.GetLength(1); j++)
                 {
-                    if (SeatingChart[i, j].is_selected_by_user == true)
+                    if (SeatingChart[i, j]!=null && SeatingChart[i, j].is_selected_by_user == true)
                     {
                         string selectedSeatID = SeatingChart[i, j].seatRowID + SeatingChart[i, j].seatColID;
                         newHold.selectedseats += selectedSeatID + ",";
@@ -113,22 +116,26 @@ namespace TicketingAppProject.ViewModels
                     //TODO Implement error dialogue 
                     Console.WriteLine("!@Debug!: HTTPPutSeatingReservation() Please select seats to hold!");
                 }
+                //Trim off the comma at the end
                 else
                 {
                     newHold.selectedseats = newHold.selectedseats.Substring(0, newHold.selectedseats.Length - 1);
                 }
 
-                string feedback = await URL_Server.getURLPutHoldOnSeats(MyEvent.eventID).PutJsonAsync(newHold)
+                //HTTP Request
+                string feedback = await URL_Server.getURLPutHoldOnSeats(MyEvent.eventID).WithCookie("loginsession",User_Server.loggedinSessionID).PutJsonAsync(newHold)
                     .ReceiveString();
-                Message = feedback;
+                SeatingCheckOutViewModel.TotalPriceFromServer = float.Parse(feedback);
+                SeatingCheckOutViewModel.HeldSeats = newHold.selectedseats;
+                success = true;
                 
                 //TODO Figure out why selected Seat will not be updated
                 OnPropertyChanged(nameof(SeatingChart));
-                
                 Console.WriteLine($"!@Debug: HTTPPutSeatingReservation responded with {feedback}");
             }
             catch (FlurlHttpException httpex)
             {
+                success = false;
                 string connectionError = httpex.Message;
                 Console.WriteLine($"@Debug: FlurlHTTPException message: {connectionError}");
 
@@ -145,8 +152,10 @@ namespace TicketingAppProject.ViewModels
             }
             catch (Exception ex)
             {
+                success = false;
                 Message = ex.Message;
             }
+            return success;
         }
 
     }

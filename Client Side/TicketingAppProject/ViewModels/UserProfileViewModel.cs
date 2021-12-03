@@ -13,7 +13,7 @@ namespace TicketingAppProject.ViewModels
             UserProfile = userProfile;
         }
 
-        private User_Server UserProfile;
+        public static User_Server UserProfile;
         
         public string UserEmail => $"Email: {UserProfile.userEmail} ";
         public string UserPassword => $"Password: {UserProfile.userPassword}";
@@ -25,7 +25,7 @@ namespace TicketingAppProject.ViewModels
         {
             try
             {
-                User_Server qUser = await URL_Server.getURLUserProfile(User_Server.loggedinUserID).GetJsonAsync<User_Server>();
+                User_Server qUser = await URL_Server.getURLUserProfile().WithCookie("loginsession",User_Server.loggedinSessionID).GetJsonAsync<User_Server>();
                 UserProfile = qUser;
                 updateDisplayValues();
                 Console.WriteLine($"@Debug!: HTTPGetUser() returned with values {qUser.userEmail} and {qUser.userPassword}");

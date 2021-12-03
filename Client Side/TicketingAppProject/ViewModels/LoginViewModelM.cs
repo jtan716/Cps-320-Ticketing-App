@@ -91,12 +91,11 @@ namespace TicketingAppProject.ViewModels
             bool success = false;
             try
             {
-                MyLoginClient.loginUserID =
+                User_Server.loggedinSessionID =
                     await URL_Server.getURLLogin().PostJsonAsync(new {email = InputEmail, password = InputPassword})
                         .ReceiveString();
                 //TODO: figure out better implementation
-                User_Server.loggedinUserID = MyLoginClient.loginUserID;
-                Console.WriteLine("@Debug: received " + MyLoginClient.loginUserID);
+                Console.WriteLine("@Debug: received " + User_Server.loggedinSessionID);
                 success = true;
                 Console.WriteLine("@Debug: Successful HTTP Request.");
             }

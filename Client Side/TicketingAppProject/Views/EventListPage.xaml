@@ -26,7 +26,7 @@
                 x:Name="ListViewEvents"
                 ItemsSource="{Binding MappedEventCollection.TargetCollection}"
                 ItemTapped="EventEntry_ItemTapped"
-                RowHeight="90"
+                RowHeight="120"
                 >
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="viewModels:EventSeatingViewModel">

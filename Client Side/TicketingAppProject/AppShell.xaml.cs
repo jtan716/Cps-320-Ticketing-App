@@ -11,10 +11,11 @@ namespace TicketingAppProject
         public AppShell()
         {
             InitializeComponent();
-            Routing.RegisterRoute(nameof(EventListPage), typeof(EventListPage));
+            //Routing.RegisterRoute(nameof(EventListPage), typeof(EventListPage));
             Routing.RegisterRoute(nameof(UserProfilePage),typeof(UserProfilePage));
             Routing.RegisterRoute(nameof(TicketListPage), typeof(TicketListPage));
             Routing.RegisterRoute(nameof(EventSeatingPage), typeof(EventSeatingPage));
+            Routing.RegisterRoute(nameof(SeatingCheckOutPage), typeof(SeatingCheckOutPage));
         }
 
         private async void OnMenuItemClicked(object sender, EventArgs e)

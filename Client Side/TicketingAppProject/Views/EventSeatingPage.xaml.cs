@@ -71,12 +71,19 @@ namespace TicketingAppProject.Views
                     {
                         //Create Checkbox
                         CheckBox myCheckBox = new CheckBox();
-                        myCheckBox.IsEnabled = !((BindingContext as EventSeatingViewModel).SeatingChart[row - 1, col - 1]
-                            .status_reserved || (BindingContext as EventSeatingViewModel).SeatingChart[row - 1, col - 1].status_held );
-                        myCheckBox.Color = (myCheckBox.IsEnabled == false) ? Color.Red : Color.Blue;
-                        myCheckBox.Opacity = (myCheckBox.IsEnabled == false) ? 0.25 : 1.0;
-                        myCheckBox.BindingContext = (BindingContext as EventSeatingViewModel).SeatingChart[row - 1, col - 1];
-                        myCheckBox.SetBinding(CheckBox.IsCheckedProperty, "is_selected_by_user");
+                        myCheckBox.IsVisible = (BindingContext as EventSeatingViewModel).SeatingChart[row - 1, col - 1] != null;
+                        if ((BindingContext as EventSeatingViewModel).SeatingChart[row - 1, col - 1] != null)
+                        {
+                            myCheckBox.IsEnabled = !((BindingContext as EventSeatingViewModel)
+                                .SeatingChart[row - 1, col - 1]
+                                .status_reserved || (BindingContext as EventSeatingViewModel)
+                                .SeatingChart[row - 1, col - 1].status_held);
+                            myCheckBox.Color = (myCheckBox.IsEnabled == false) ? Color.Red : Color.Blue;
+                            myCheckBox.Opacity = (myCheckBox.IsEnabled == false) ? 0.25 : 1.0;
+                            myCheckBox.BindingContext =
+                                (BindingContext as EventSeatingViewModel).SeatingChart[row - 1, col - 1];
+                            myCheckBox.SetBinding(CheckBox.IsCheckedProperty, "is_selected_by_user");
+                        }
                         EventSeatingGrid.Children.Add(myCheckBox, col, row);
                     }
                 }
@@ -86,7 +93,11 @@ namespace TicketingAppProject.Views
 
         private async void CheckOutButton_OnClicked(object sender, EventArgs e)
         {
-            await (BindingContext as EventSeatingViewModel).HTTPPutSeatingReservation();
+            bool success = await (BindingContext as EventSeatingViewModel).HTTPPutSeatingReservation();
+            if (success)
+            {
+                await Shell.Current.Navigation.PushAsync(new SeatingCheckOutPage(new SeatingCheckOutViewModel((BindingContext as EventSeatingViewModel).MyEvent)));
+            }
             /*
             for (int i = 0; i < (BindingContext as EventSeatingViewModel).SeatingChart.GetLength(0); i++)
             {

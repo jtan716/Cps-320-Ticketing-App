@@ -22,7 +22,7 @@ namespace TicketingAppProject.ViewModels
         {
             try
             {
-                List<Ticket_Server> tickets = await URL_Server.getURLUserTickets(User_Server.loggedinUserID).GetJsonAsync<List<Ticket_Server>>();
+                List<Ticket_Server> tickets = await URL_Server.getURLUserTickets().WithCookie("loginsession",User_Server.loggedinSessionID).GetJsonAsync<List<Ticket_Server>>();
                 TicketCollection.Instance.Tickets.Clear();
                 foreach (Ticket_Server myticket in tickets)
                 {

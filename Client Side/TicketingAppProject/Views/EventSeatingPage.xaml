@@ -12,12 +12,20 @@
     
     <ContentPage.Content>
         <StackLayout Padding="20" x:Name="EventSeatingPageLayout">
-            <Label Text="{Binding EventDescription}" />
             <Label Text="{Binding EventPricePerSeat}" />
             <Label Text="{Binding EventDurationInHours}" />
             <Label Text="{Binding EventStartDateTime}" />
             <Grid x:Name="EventSeatingGrid" HorizontalOptions="Center" VerticalOptions="Center"/>
             <Button x:Name="CheckOutButton" Padding="10" HorizontalOptions="Center" Text="Check Out Seats" Clicked="CheckOutButton_OnClicked"/>
+            
+            <StackLayout Orientation="Horizontal" Padding="20">
+                <Label Text="Available:" VerticalTextAlignment ="Center"/>
+                <CheckBox Color="Blue" IsEnabled="False"/>
+                <Label />
+                <Label Text="Unavailable:" VerticalTextAlignment="Center"/>
+                <CheckBox Color="Red" IsEnabled="False" Opacity="0.25"/>
+            </StackLayout>
+
             <Label Text="{Binding Message}" />
         </StackLayout>
     </ContentPage.Content>

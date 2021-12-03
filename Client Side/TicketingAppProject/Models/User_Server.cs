@@ -5,7 +5,7 @@ namespace TicketingAppProject.Models
 {
     public class User_Server
     {
-        public static string loggedinUserID;
+        public static string loggedinSessionID;
         
         [JsonProperty("id")]
         public string userID { get; set; }
