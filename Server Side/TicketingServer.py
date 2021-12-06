@@ -22,6 +22,10 @@
 #For Ticket Table...
     #have client notify user of 10 seat booking cap
 
+#Scenarios to take in:
+    # Scenario A: User holds seat but quits app 
+    # Scenario B: User has bad internet connection when trying to hold / buy seats
+
 
 from flask import Flask, request, abort, jsonify, Response
 from flask.helpers import make_response
@@ -416,7 +420,7 @@ def hold_selectedseats(event_id: int):
         seat_list = validate_seatingchart_format(selected_seats_in, event_id)
 
         with lock:
-            validate_seats_hold_availability(seat_list)
+            validate_seats_hold_availability(seat_list, myloginsession.userlinkid)
 
             for seat in seat_list:
                 update_seat = Seating.query.filter_by(eventlinkid=seat.eventlinkid,rowid=seat.rowid, colid=seat.colid).first()
@@ -658,12 +662,14 @@ def create_userticket():
     
     #return f'Suceessfully reserved ticket with id of {id_in}'
 
-def validate_seats_hold_availability(chosenseats: list):
+def validate_seats_hold_availability(chosenseats: list, myloginsession: str):
     isInvalid = False
     invalidSeats = ""
     for seat in chosenseats:
         seatstatus = Seating.query.filter_by(eventlinkid=seat.eventlinkid,rowid=seat.rowid, colid=seat.colid).first()
-        if (seatstatus.status_held == True) and (seatstatus.status_reserved == True):
+        # TODO 
+        # Implement bool logic to allow user to proceed to checkout with held seat if the hold belongs to that user and only if that seat is not reserved already
+        if (seatstatus.status_held == True) or (seatstatus.status_reserved == True):
             isInvalid = True
             invalidSeats+= str(seat.rowid) + str(seat.colid) + ","
     
