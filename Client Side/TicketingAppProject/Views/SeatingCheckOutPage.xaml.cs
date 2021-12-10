@@ -32,5 +32,11 @@ namespace TicketingAppProject.Views
         {
             (BindingContext as SeatingCheckOutViewModel).TestConcurrency();
         }
+
+        protected override async void OnDisappearing()
+        {
+            base.OnDisappearing();
+            await (BindingContext as SeatingCheckOutViewModel).HTTPReleaseHeldSeats();
+        }
     }
 }

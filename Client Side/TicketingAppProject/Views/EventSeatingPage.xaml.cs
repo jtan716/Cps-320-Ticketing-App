@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using TicketingAppProject.Models;
 using TicketingAppProject.ViewModels;
 using Xamarin.Forms;
@@ -22,8 +23,21 @@ namespace TicketingAppProject.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            await RefreshSeatingChartTable();
+        }
+
+        async Task RefreshSeatingChartTable()
+        {
+            ActIndicatorSeatingPage.IsVisible = true;
+            ActIndicatorSeatingPage.IsRunning = true;
+            EventSeatingGrid.ColumnDefinitions.Clear();
+            EventSeatingGrid.RowDefinitions.Clear();
+            EventSeatingGrid.Children.Clear();
             await (BindingContext as EventSeatingViewModel).HTTPGetSeatingList();
             CreateSeatingChartTable();
+            ActIndicatorSeatingPage.IsRunning = false;
+            ActIndicatorSeatingPage.IsVisible = false;
+            RefreshViewSeatingPage.IsRefreshing = false;
         }
 
         private void CreateSeatingChartTable()
@@ -112,6 +126,11 @@ namespace TicketingAppProject.Views
         private void TestConButton_OnClicked(object sender, EventArgs e)
         {
             (BindingContext as EventSeatingViewModel).TestConcurrencyHoldFunction();
+        }
+
+        private async void RefreshViewSeatingPage_OnRefreshing(object sender, EventArgs e)
+        {
+            await RefreshSeatingChartTable();
         }
     }
 }

@@ -7,12 +7,20 @@
              x:Class="TicketingAppProject.Views.UserProfilePage"
              Title="User Profile">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="{Binding UserEmail}" />
-            <Label Text="{Binding UserPassword}"/> 
-            <Label Text="{Binding UserCreditCardNumber}" />
-            <Label Text="{Binding UserCreditCardExpDate}" />
-            <Label Text="{Binding UserCreditCardCVV}" />
+        <StackLayout Padding="10">
+            <Label Text="Email:" />
+            <Entry Text="{Binding UserEmail}" IsEnabled="False"/>
+            <Label Text="Password:" />
+            <Entry Text="****************" IsEnabled="False"/> 
+            <Label Text="Credit Card Number:" />
+            <Entry Text="{Binding UserCreditCardNumber}" />
+            <Label Text="Credit Card Expiration Date:"/>
+            <DatePicker Date="{Binding UserCreditCardExpDate}"/>
+            <Label Text="Credit Card CVV:" />
+            <Entry Keyboard="Numeric" Text="{Binding UserCreditCardCVV}" />
+            <Button Text="Update Information" IsEnabled="{Binding IsProfileChanged}" Clicked="BtnUpdateProfile_OnClicked"/>
+            <ActivityIndicator IsRunning="{Binding IsBusy}" />
+            <Label Text="{Binding Message}" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -24,7 +24,7 @@ namespace TicketingAppProject.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await (BindingContext as EventListViewModel).HTTPGetEventList();
+            await LoadEventsCommand();
         }
         
         private async void EventEntry_ItemTapped(object sender, ItemTappedEventArgs e)
@@ -32,6 +32,19 @@ namespace TicketingAppProject.Views
             _selectedEventSeatingViewModel = e.Item as EventSeatingViewModel;
             var page = new EventSeatingPage(_selectedEventSeatingViewModel);
             _ = Shell.Current.Navigation.PushAsync(page);
+        }
+
+        public async Task LoadEventsCommand()
+        {
+            ListViewEvents.IsVisible = false;
+            ActIndicatorEventListPage.IsVisible = true;
+            ActIndicatorEventListPage.IsRunning = true;
+            
+            await (BindingContext as EventListViewModel).HTTPGetEventList();
+
+            ListViewEvents.IsVisible = true;
+            ActIndicatorEventListPage.IsVisible = false;
+            ActIndicatorEventListPage.IsRunning = false;
         }
         
     }

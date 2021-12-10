@@ -9,25 +9,29 @@
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true">
     
-    
     <ContentPage.Content>
-        <StackLayout Padding="20" x:Name="EventSeatingPageLayout">
-            <Label Text="{Binding EventPricePerSeat}" />
-            <Label Text="{Binding EventDurationInHours}" />
-            <Label Text="{Binding EventStartDateTime}" />
-            <Grid x:Name="EventSeatingGrid" HorizontalOptions="Center" VerticalOptions="Center"/>
-            <Button x:Name="CheckOutButton" Padding="10" HorizontalOptions="Center" Text="Check Out Seats" Clicked="CheckOutButton_OnClicked"/>
-            <Button x:Name="TestConButton" Padding="10" HorizontalOptions="Center" Text="Test Concurrency" Clicked="TestConButton_OnClicked" />
-            
-            <StackLayout Orientation="Horizontal" Padding="20">
-                <Label Text="Available:" VerticalTextAlignment ="Center"/>
-                <CheckBox Color="Blue" IsEnabled="False"/>
-                <Label />
-                <Label Text="Unavailable:" VerticalTextAlignment="Center"/>
-                <CheckBox Color="Red" IsEnabled="False" Opacity="0.25"/>
-            </StackLayout>
+        <RefreshView x:Name="RefreshViewSeatingPage" Refreshing="RefreshViewSeatingPage_OnRefreshing">
+            <ScrollView>
+            <StackLayout Padding="20" x:Name="EventSeatingPageLayout">
+                <Label Text="{Binding EventPricePerSeat}" />
+                <Label Text="{Binding EventDurationInHours}" />
+                <Label Text="{Binding EventStartDateTime}" />
+                <ActivityIndicator x:Name="ActIndicatorSeatingPage" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
+                <Grid x:Name="EventSeatingGrid" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <Button x:Name="CheckOutButton" Padding="10" HorizontalOptions="Center" Text="Check Out Seats" Clicked="CheckOutButton_OnClicked"/>
+                <Button x:Name="TestConButton" Padding="10" HorizontalOptions="Center" Text="Test Concurrency" Clicked="TestConButton_OnClicked" />
+                
+                <StackLayout Orientation="Horizontal" Padding="20">
+                    <Label Text="Available:" VerticalTextAlignment ="Center"/>
+                    <CheckBox Color="Blue" IsEnabled="False"/>
+                    <Label />
+                    <Label Text="Unavailable:" VerticalTextAlignment="Center"/>
+                    <CheckBox Color="Red" IsEnabled="False" Opacity="0.25"/>
+                </StackLayout>
 
-            <Label Text="{Binding Message}" />
-        </StackLayout>
+                <Label Text="{Binding Message}" />
+            </StackLayout>
+            </ScrollView>
+        </RefreshView>
     </ContentPage.Content>
 </ContentPage>

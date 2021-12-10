@@ -22,10 +22,11 @@ namespace TicketingAppProject.ViewModels
             InputEmail = myLoginClient.loginEmail;
             InputPassword = myLoginClient.loginPassword;
             LoginCommand = new Command(OnLoginClicked);
+            SignupCommand = new Command(OnSignupClicked);
         }
         
         private Login_Client MyLoginClient;
-        private CancellationTokenSource cancelSource;
+        public Command SignupCommand { get;  }
         public Command LoginCommand { get; }
 
         private string _inputEmail;
@@ -42,6 +43,27 @@ namespace TicketingAppProject.ViewModels
             set => SetProperty(ref _inputPassword, value);
         }
 
+        private string _inputSignupEmail;
+        public string InputSignupEmail
+        {
+            get => _inputSignupEmail;
+            set => SetProperty(ref _inputSignupEmail, value);
+        }
+
+        private string _inputSignupPassword;
+        public string InputSignUpPassword
+        {
+            get => _inputSignupPassword;
+            set => SetProperty(ref _inputSignupPassword, value);
+        }
+
+        private string _inputSignupPasswordConfirm;
+        public string InputSignupPasswordConfirm
+        {
+            get => _inputSignupPasswordConfirm;
+            set => SetProperty(ref _inputSignupPasswordConfirm, value);
+        }
+
         private string _message;
         public string Message
         {
@@ -49,12 +71,30 @@ namespace TicketingAppProject.ViewModels
             set => SetProperty(ref _message, value);
         }
 
+        private bool _loginIsBusy;
+        public bool LoginIsBusy
+        {
+            get => _loginIsBusy;
+            set => SetProperty(ref _loginIsBusy, value);
+        }
+
+        public bool LoginNotBusy => !LoginIsBusy;
+
+        private bool _signupIsBusy;
+        public bool SignupIsBusy
+        {
+            get => _signupIsBusy;
+            set => SetProperty(ref _signupIsBusy, value);
+        }
+
+        public bool SignupNotBusy => !SignupIsBusy;
+
         public string UserEmail => MyLoginClient.loginEmail;
         public string UserPassword => MyLoginClient.loginPassword;
 
         public string UserID => MyLoginClient.loginUserID;
 
-        public bool ValidateUsernamePasswordFormat()
+        public bool ValidateLoginUsernamePasswordFormat()
         {
             //email username field must be non-empty and have the character '@'
             Message = "";
@@ -83,21 +123,70 @@ namespace TicketingAppProject.ViewModels
 
             return isValid;
         }
+        
+        public bool ValidateSignupUsernamePasswordFormat()
+        {
+            //email username field must be non-empty and have the character '@'
+            Message = "";
+            bool isValid = true;
 
-        private async Task<bool> HTTPLoginRequest()
+            if (String.IsNullOrEmpty(InputSignupEmail))
+            {
+                Message += "Please enter in an email in the Email Entry Field. \n";
+                isValid = false;
+            }
+            else if (!InputSignupEmail.Contains("@"))
+            {
+                Message += "Please enter in an email (make sure to include the @ symbol). \n";
+                isValid = false;
+            }
+
+            if (String.IsNullOrEmpty(InputSignUpPassword))
+            {
+                Message += "Please enter in a password in the Password Entry Field. \n";
+                isValid = false;
+            }
+            else if (InputSignUpPassword != InputSignupPasswordConfirm)
+            {
+                Message += "Please make sure that password and confirmation password match.\n";
+                isValid = false;
+            }
+            
+            OnPropertyChanged(nameof(UserEmail));
+            OnPropertyChanged(nameof(UserPassword));
+            OnPropertyChanged(nameof(UserID));
+
+            return isValid;
+        }
+
+        private async Task<bool> HTTPLoginOrSignupRequest(bool ForLogin)
         {
             Message = "";
-            Console.WriteLine("@Debug: Executing HTTPLoginRequest().");
+            Console.WriteLine("@Debug: Executing HTTPLoginOrSignupRequest().");
             bool success = false;
             try
             {
-                User_Server.loggedinSessionID =
-                    await URL_Server.getURLLogin().PostJsonAsync(new {email = InputEmail, password = InputPassword})
-                        .ReceiveString();
-                //TODO: figure out better implementation
-                Console.WriteLine("@Debug: received " + User_Server.loggedinSessionID);
-                success = true;
-                Console.WriteLine("@Debug: Successful HTTP Request.");
+                if (ForLogin)
+                {
+                    LoginIsBusy = true;
+                    User_Server.loggedinSessionID =
+                        await URL_Server.getURLLogin().PostJsonAsync(new {email = InputEmail, password = InputPassword})
+                            .ReceiveString();
+                    //TODO: figure out better implementation
+                    Console.WriteLine("@Debug: received " + User_Server.loggedinSessionID);
+                    success = true;
+                    Console.WriteLine("@Debug: Successful HTTP Request.");
+                    LoginIsBusy = false;
+                }
+                else
+                {
+                    SignupIsBusy = true;
+                    await URL_Server.getURLSignup()
+                        .PostJsonAsync(new {email = InputSignupEmail, password = InputSignUpPassword});
+                    success = true;
+                    Message = "Successfully created an account!";
+                    SignupIsBusy = false;
+                }
             }
             catch (FlurlHttpException httpex)
             {
@@ -120,18 +209,26 @@ namespace TicketingAppProject.ViewModels
             {
                 success = false;
                 Message = ex.Message;
-                Console.WriteLine("@Debug: " + ex.GetType() + " at HTTPLoginRequest(), " + ex.Message);
+                Console.WriteLine("@Debug: " + ex.GetType() + " at HTTPLoginOrSignupRequest(), " + ex.Message);
             }
-            Console.WriteLine("@Debug: HTTPLoginRequest() returned "+ success);
+            Console.WriteLine("@Debug: HTTPLoginOrSignupRequest() returned "+ success);
             return success;
         }
         
         private async void OnLoginClicked(object obj)
         {
-            if (ValidateUsernamePasswordFormat() && await HTTPLoginRequest())
+            if (ValidateLoginUsernamePasswordFormat() && await HTTPLoginOrSignupRequest(true))
             {
                 // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
                 await Shell.Current.GoToAsync($"//{nameof(EventListPage)}");
+            }
+        }
+
+        private async void OnSignupClicked(object obj)
+        {
+            if (ValidateSignupUsernamePasswordFormat() && await HTTPLoginOrSignupRequest(false))
+            {
+                //await Shell.Current.GoToAsync($"//{nameof(EventListPage)}");
             }
         }
     }

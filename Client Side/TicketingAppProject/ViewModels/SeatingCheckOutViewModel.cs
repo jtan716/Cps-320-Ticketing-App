@@ -13,8 +13,7 @@ namespace TicketingAppProject.ViewModels
             MyEvent = myEvent;
             TotalPrice = TotalPriceFromServer.ToString();
             SelectedSeats = HeldSeats;
-            CreditCardNum = "PLACEHOLDER";
-            //CreditCardNum = UserProfileViewModel.UserProfile.userCreditCardNumber;
+            CreditCardNum = CreditCardNumberRegistered;
         }
         public Event_Server MyEvent { get; set; }
         
@@ -29,6 +28,9 @@ namespace TicketingAppProject.ViewModels
         public string EventStartDateTime => MyEvent.eventStartDateAndTime.ToString("dddd, dd MMMM yyyy");
 
         public static float TotalPriceFromServer { get; set; }
+        
+        public static string CreditCardNumberRegistered { get; set; }
+            
         public static string HeldSeats { get; set; }
 
         private string _selectedSeats;
@@ -58,6 +60,8 @@ namespace TicketingAppProject.ViewModels
             get => _message;
             set => SetProperty(ref _message, value);
         }
+
+        private bool success;
         
         public async Task<bool> HTTPReserveSeatsRequest()
         {
@@ -67,7 +71,7 @@ namespace TicketingAppProject.ViewModels
             Console.WriteLine($"creditcardnumber: {CreditCardNum}");
             
             Message = "";
-            bool success = false;
+            success = false;
             try
             {
                 ReserveRequest myReserveRequest = new ReserveRequest();
@@ -105,6 +109,15 @@ namespace TicketingAppProject.ViewModels
             }
 
             return success;
+        }
+        
+        public async Task HTTPReleaseHeldSeats()
+        {
+            if (!success)
+            {
+                await URL_Server.getURLPutCancellationOnHeldSeats(MyEvent.eventID)
+                    .WithCookie("loginsession", User_Server.loggedinSessionID).GetStringAsync();
+            }
         }
 
         //TO BE DELETED

@@ -11,18 +11,15 @@
     <ContentPage.Content>
         <StackLayout>
             
-            <!--
-            TODO 
-            <ActivityIndicator>
 
-            </ActivityIndicator>
+            <ActivityIndicator x:Name="ActIndicatorEventListPage" 
+                               VerticalOptions="FillAndExpand"
+                               HorizontalOptions="FillAndExpand"/>
             
-            <RefreshView>
-
-            </RefreshView>
-            -->
+            <RefreshView x:Name="RefreshViewEventListPage" IsRefreshing="{Binding IsRefreshing}" 
+                         Command="{Binding RefreshCommand}">
             
-            <ListView
+                <ListView
                 x:Name="ListViewEvents"
                 ItemsSource="{Binding MappedEventCollection.TargetCollection}"
                 ItemTapped="EventEntry_ItemTapped"
@@ -39,7 +36,8 @@
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-            </ListView>
+                </ListView>
+            </RefreshView>
             
         </StackLayout>
     </ContentPage.Content>

@@ -27,5 +27,10 @@ namespace TicketingAppProject.Views
             base.OnAppearing();
             await (BindingContext as UserProfileViewModel).HTTPGetUser();
         }
+
+        private async void BtnUpdateProfile_OnClicked(object sender, EventArgs e)
+        {
+            await (BindingContext as UserProfileViewModel).HTTPUpdateUserProfile();
+        }
     }
 }

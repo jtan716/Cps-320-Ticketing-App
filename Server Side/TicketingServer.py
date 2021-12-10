@@ -27,6 +27,7 @@
     # Scenario B: User has bad internet connection when trying to hold / buy seats
 
 
+from types import EllipsisType
 from flask import Flask, request, abort, jsonify, Response
 from flask.helpers import make_response
 from werkzeug.exceptions import HTTPException
@@ -276,7 +277,7 @@ def get_eventdetail(event_id: int):
 
 # HTTP Request (ADMIN)
 # @param: json {title, description, price per seat, duration in hours, date and time of event}
-# @detail: creates requested event record; price and duration must be positive; does NOT check for duplicates
+# @detail: creates requested event recorduser_dict = request.get_json() price and duration must be positive; does NOT check for duplicates
 # @detail: uploads event record in db
 # @return: returns event record in json{}
 @app.route("/events", methods=['POST'])
@@ -414,6 +415,7 @@ def hold_selectedseats(event_id: int):
     ev = validate_event(event_id)
     myloginsession = validate_session(loginsession_in)
     expiration_date_in = datetime.now() + timedelta(minutes=10)
+    userid_in = validate_user(myloginsession.userlinkid)
     try:
         selected_seats_in = selected_seats_dict["selectedseats"]
 
@@ -431,10 +433,36 @@ def hold_selectedseats(event_id: int):
             db.session.commit()
 
         totalprice_in  = calculate_ticketprice(len(seat_list),ev)
-        return str(totalprice_in)
+
+        return_d = {'price':totalprice_in, 'user_creditcard':userid_in.creditcard_number}
+
+        return jsonify(return_d)
 
     except Exception as e: 
         abort(400, description=f'Invalid request: {e}')
+
+@app.route("/events/<int:event_id>/seating/cancelhold", methods=['GET'])
+def release_heldseats(event_id: int):
+    try:
+        loginsession_in = str(request.cookies.get('loginsession'))
+        ev = validate_event(event_id)
+        myloginsession = validate_session(loginsession_in)
+        userid_in = validate_user(myloginsession.userlinkid)
+
+        held_seat_list = Seating.query.filter_by(eventlinkid=event_id,userid_heldby=userid_in.id).all()
+
+        for seat in held_seat_list:
+            seat.status_held = False
+            seat.expiration_hold_date = None
+            seat.userid_heldby = None
+
+        db.session.commit()
+
+        return "Successfully canceled held seats!"
+
+    except Exception as e:
+        print(e)
+
 
 
 
@@ -513,8 +541,45 @@ def get_userinfo():
     myloginsession = validate_session(loginsession_in)
 
     my_user = User.query.filter_by(id=myloginsession.userlinkid).first()
-    return jsonify(my_user.to_dict_all())
 
+    d = {'id': my_user.id, 'email': my_user.email, 'password':my_user.password}
+    if (my_user.creditcard_number is not None):
+        d['creditcard_number'] = my_user.creditcard_number
+    if (my_user.creditcard_expdate is not None):
+        d['creditcard_expdate'] = my_user.creditcard_expdate
+    if (my_user.creditcard_cvv is not None):
+        d['creditcard_cvv'] = my_user.creditcard_cvv
+
+    return jsonify(d)
+
+@app.route("/users/myprofile", methods=['PATCH'])
+def update_userinfo():
+    loginsession_in = request.cookies.get('loginsession')
+    myloginsession = validate_session(loginsession_in)
+
+    userupdate_dict = request.get_json()
+
+    creditcard_num_in = userupdate_dict["creditcard_num"]
+    creditcard_exp_in = datetime.strptime(userupdate_dict["creditcard_exp"],"%m/%d/%Y")
+    creditcard_cvv_in = userupdate_dict["creditcard_cvv"]
+
+    if (len(creditcard_num_in.strip()) != 19):
+        abort(400, description=f'Credit Card number must be 20 characters long (including hyphnes - )!')
+
+    if (creditcard_exp_in < datetime.now()):
+        abort(400, description=f'Cannot enter an expired credit card.')
+
+    if len(str(creditcard_cvv_in)) != 3:
+        abort(400, description=f'Credit card CVV must be 3 digits')
+
+    my_user = User.query.filter_by(id=myloginsession.userlinkid).first()
+    my_user.creditcard_number = creditcard_num_in
+    my_user.creditcard_expdate = creditcard_exp_in
+    my_user.creditcard_cvv = creditcard_cvv_in
+
+    db.session.commit()
+
+    return jsonify(my_user.to_dict_all())
 
 # HTTP Request (ADMIN)
 # @param: dict {email, password, creditcard number, credit card expiration date, credit card cvv}
@@ -530,22 +595,32 @@ def create_user():
         creditcard_num_in = None
         creditcard_exp_in = None
         creditcard_cvv_in = None
+
         try: 
             creditcard_num_in = user_dict["creditcard_num"]
             creditcard_exp_in = datetime.strptime(user_dict["creditcard_exp"],"%m/%d/%Y, %H:%M:%S")
             creditcard_cvv_in = user_dict["creditcard_cvv"]
+
         except:
             print("@ '/users' POST request: no/invalid credit card info.")
 
+
+        with lock:
+            existing_user = User.query.filter_by(email=email_in).first()
+            if (existing_user):
+                abort(400, description=f'Account with email {email_in} already exists!')
+
+            if not("@bju.edu" in email_in) and not("@students.bju.edu" in email_in):
+                abort(400, description=f'Must enter a valid BJU email.')
+
+            user = User(id=id_in,email=email_in,password=password_in,creditcard_number=creditcard_num_in,creditcard_expdate=creditcard_exp_in,creditcard_cvv=creditcard_cvv_in)
+            db.session.add(user)
+            db.session.commit()
+
+        return jsonify(user.to_dict_all())
+
     except Exception as e:
         abort(400, description=f'Invalid request: {e}')
-
-
-    user = User(id=id_in,email=email_in,password=password_in,creditcard_number=creditcard_num_in,creditcard_expdate=creditcard_exp_in,creditcard_cvv=creditcard_cvv_in)
-    db.session.add(user)
-    db.session.commit()
-
-    return jsonify(user.to_dict_all())
 
 
 # HTTP Request (ADMIN)
@@ -640,6 +715,9 @@ def create_userticket():
         event_in = validate_event(eventid_in)
         validate_seatingchart_format(seatsreq_in,eventid_in)
         seatlist_in = validate_seats(seatsreq_in,eventid_in)
+
+        if (userid_in.creditcard_number is None) or (userid_in.creditcard_expdate is None) or (userid_in.creditcard_cvv is None):
+            abort(400, description=f'Cannot purchase ticket with invalid credit card information! Please fill out all credit card information (including expiration date and CVV)')
 
         with lock:
             validate_seats_reserve_availability(seatlist_in,myloginsession.userlinkid)

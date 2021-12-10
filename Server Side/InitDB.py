@@ -1,9 +1,9 @@
 import requests, datetime, json
 
+
+
 '''
-------------------
-CREATE EVENTS
-------------------
+#CREATE EVENTS
 '''
 
 event_1 = {"title": "Symphonic Hollywood", "description": "Join the beloved conductor Dr. Moore as he presents some totally non-secular music in a manner that makes you question whether if you're still in a conservative university.", "priceperseat":25,"durationhours":2,"dateandtime": datetime.datetime(2021, 11, 30, 8, 30).strftime("%m/%d/%Y, %H:%M:%S")}
@@ -13,11 +13,9 @@ event_2 = {"title": "Mid Summer Night's Dream", "description": "Join us for an a
 event_3 = {"title": "Symphonic Wind Band", "description": "Begin your Christmas season with Carols and Classics featuring the BJU Symphonic Wind Band with the Concert Choir and University Singers. You’ll be thrilled as you celebrate Christ’s incarnation with this program of old and new favorites which includes the premiere of a new work by composition faculty member Seth Custer.", "priceperseat":20.50,"durationhours":1.5,"dateandtime":datetime.datetime(2021,12, 8, 20, 15).strftime("%m/%d/%Y, %H:%M:%S")}
 
 '''
-------------------
-CREATE SEAT CHARTS
-------------------
+#CREATE SEAT CHARTS
 '''
-seatingchart_1 = {"seating_chart": "A1, A2, A3, B1, B2, B3, C1, C2, C3, D1"}
+seatingchart_1 = {"seating_chart": "A1, A2, A3, B1, B2, B3, C1, C2, C3"}
 
 seatingchart_2 = {"seating_chart": "A1, A2, A3, A4, B1, B2, B3, B4, C1, C2, C3, C4, D1, D2, D3, D4"}
 
@@ -25,9 +23,7 @@ seatingchart_3 = {"seating_chart": "A1, A2, A3, A4, A5, B1, B2, B3, B4, B5, C1, 
 
 
 '''
-------------------
-CREATE USERS
-------------------
+#CREATE USERS
 '''
 
 user_1 = {"email": "jack@bju.edu", "password": "123456", "creditcard_num": "1234-5678-4321-8765", "creditcard_exp": datetime.datetime(2023, 4, 28).strftime("%m/%d/%Y, %H:%M:%S"), "creditcard_cvv": 321}
@@ -60,5 +56,15 @@ print(f'Response Code For Post: {r7.status_code}\n{r7.text}')
 print(f'Response Code For Post: {r8.status_code}\n{r8.text}')
 
 
+'''
+
+'''
+#Test Cases
+'''
+
+event_4 = {"title": "My Test Event", "description": "This event is for testing purposes only.", "priceperseat":15,"durationhours":3,"dateandtime": datetime.datetime(2021, 12, 15, 8, 30).strftime("%m/%d/%Y, %H:%M:%S")}
+rt1 = requests.post("http://localhost:5000/events",json=event_4)
+print(f'Response Code For Post: {rt1.status_code}\n{rt1.text}')
 
 
+'''

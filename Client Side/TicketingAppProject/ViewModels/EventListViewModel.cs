@@ -13,12 +13,28 @@ namespace TicketingAppProject.ViewModels
     public class EventListViewModel: BaseViewModel
     {
         public MappedObservableCollection<Event_Server, EventSeatingViewModel> MappedEventCollection { get; }
+        
+        public ICommand RefreshCommand { get;  }
 
         public EventListViewModel()
         {
             MappedEventCollection = new MappedObservableCollection<Event_Server, EventSeatingViewModel>(
                 myevent => new EventSeatingViewModel(myevent),
                 EventCollection.Instance.Events);
+            RefreshCommand = new Command(ExecuteRefreshCommand);
+        }
+
+        private bool _isRefreshing;
+        public bool IsRefreshing
+        {
+            get => _isRefreshing;
+            set => SetProperty(ref _isRefreshing, value);
+        }
+
+        async void ExecuteRefreshCommand()
+        {
+            await HTTPGetEventList();
+            IsRefreshing = false;
         }
 
         public async Task HTTPGetEventList()

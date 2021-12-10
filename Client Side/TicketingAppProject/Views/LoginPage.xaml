@@ -10,13 +10,33 @@
              Shell.NavBarIsVisible="False">
     <ContentPage.Content>
         <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
-            <Label Text="Email:" />
-            <Entry Keyboard="Plain" Text="{Binding InputEmail}"/>
-            <Label Text="Password:" />
-            <Entry Keyboard="Plain" IsPassword="True" Text="{Binding InputPassword}"/>
-            <Button VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}"/>
-            <Label Text="{Binding Message}" />
-            <ActivityIndicator></ActivityIndicator>
+            
+            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Spacing="10" Padding="10">
+                <Button Text="Login" Padding="30,0,30,0" x:Name="BtnLoginClicked" Clicked="BtnLoginClicked_OnClicked"/>
+                <Button Text="Signup" Padding="30,0,30,0" x:Name="BtnSignupClicked" Clicked="BtnSignupClicked_OnClicked"/>
+            </StackLayout>
+            
+            <StackLayout Padding="10,0,10,0" VerticalOptions="Center" x:Name="LoginContent">
+                <Label Text="Email:" />
+                <Entry Keyboard="Plain" Text="{Binding InputEmail}"/>
+                <Label Text="Password:" />
+                <Entry Keyboard="Plain" IsPassword="True" Text="{Binding InputPassword}"/>
+                <Button VerticalOptions="Center" Text="Login" IsEnabled="{Binding LoginNotBusy}" Command="{Binding LoginCommand}"/>
+                <Label Text="{Binding Message}" />
+                <ActivityIndicator x:Name="ActIndicatorLogin" IsRunning="{Binding LoginIsBusy}"/>
+            </StackLayout>
+            
+            <StackLayout Padding="10,0,10,0" VerticalOptions="Center" x:Name="SignupContent">
+                <Label Text="Email:" />
+                <Entry Text="{Binding InputSignupEmail}" />
+                <Label Text="Password:" />
+                <Entry IsPassword="True" Text="{Binding InputSignUpPassword}"/>
+                <Label Text="Confirm Password:" />
+                <Entry IsPassword="True" Text="{Binding InputSignupPasswordConfirm}" />
+                <Button Text="Sign Up" IsEnabled="{Binding SignupNotBusy}" Command="{Binding SignupCommand}"/>
+                <Label Text="{Binding Message}" />
+                <ActivityIndicator x:Name="ActIndicatorSignup" IsRunning="{Binding SignupIsBusy}"/>
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

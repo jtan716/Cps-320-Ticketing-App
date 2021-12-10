@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Flurl.Http;
 using Newtonsoft.Json;
 using TicketingAppProject.Models;
@@ -47,7 +48,6 @@ namespace TicketingAppProject.ViewModels
         private List<Seat_Server> EventSeatList;
         
         public Seat_Server[,] SeatingChart { get; set; }
-
 
         public async Task HTTPGetSeatingList()
         {
@@ -123,9 +123,11 @@ namespace TicketingAppProject.ViewModels
                 }
 
                 //HTTP Request
-                string feedback = await URL_Server.getURLPutHoldOnSeats(MyEvent.eventID).WithCookie("loginsession",User_Server.loggedinSessionID).PutJsonAsync(newHold)
-                    .ReceiveString();
-                SeatingCheckOutViewModel.TotalPriceFromServer = float.Parse(feedback);
+                FeedbackDictionary feedback = await URL_Server.getURLPutHoldOnSeats(MyEvent.eventID)
+                    .WithCookie("loginsession", User_Server.loggedinSessionID).PutJsonAsync(newHold)
+                    .ReceiveJson<FeedbackDictionary>();
+                SeatingCheckOutViewModel.TotalPriceFromServer = feedback.return_price;
+                SeatingCheckOutViewModel.CreditCardNumberRegistered = feedback.return_creditcard;
                 SeatingCheckOutViewModel.HeldSeats = newHold.selectedseats;
                 success = true;
                 
@@ -157,7 +159,7 @@ namespace TicketingAppProject.ViewModels
             }
             return success;
         }
-        
+
         public async Task TestConcurrencyHoldFunction()
         {
             HoldRequest newHold = new HoldRequest();
@@ -195,6 +197,11 @@ namespace TicketingAppProject.ViewModels
                 URL_Server.getURLPutHoldOnSeats(MyEvent.eventID)
                     .WithCookie("loginsession", User_Server.loggedinSessionID).PutJsonAsync(newHold));
         }
+        
+        public void NotifyAll()
+        {
+            OnPropertyChanged("");
+        }
 
     }
     
@@ -203,6 +210,15 @@ namespace TicketingAppProject.ViewModels
     {
         public string userid { get; set; }
         public string selectedseats { get; set; }
+    }
+
+    internal class FeedbackDictionary
+    {
+        [JsonProperty("price")]
+        public float return_price { get; set; }
+
+        [JsonProperty("user_creditcard")]
+        public string return_creditcard { get; set; }
     }
 
 }
