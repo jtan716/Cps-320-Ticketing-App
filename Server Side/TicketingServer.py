@@ -1,5 +1,5 @@
 # To use this, 
-# pip3 install requests flask flas_sqlalchemy eventlet flask_socketio
+# pip3 install requests flask flask_sqlalchemy eventlet flask_socketio
 
 #Source Code: Dr. Schaub's service3.py from the class examples
 
@@ -178,7 +178,8 @@ END TABLE 5
 '''
 
 # Create tables from model classes
-db.create_all()
+with app.app_context():
+    db.create_all()
 
 # ----------------------------------------
 # Central error handler. 
@@ -841,7 +842,27 @@ END WEB SOCKET API CALLS
 ***************************
 '''
 
+'''
+***************************
+APPLICATION CONTEXT
+'''
+def create_app():
+    app = Flask(__name__)
+
+    with app.app_context():
+        init_db()
+
+    return app
+
+
+'''
+APPLICATION CONTEXT
+***************************
+'''
+
+
+
 # Startup Server 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=True) # for pretty print
+    app.run(host="0.0.0.0", port=8080, debug=True) # for pretty print
     #socketio.run(app, use_reloader=True) # for client functionality

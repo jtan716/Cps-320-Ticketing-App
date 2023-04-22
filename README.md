@@ -1,5 +1,39 @@
 # Cps-320-Ticketing-App
 
+### About
+This git project is developed for Cps 320 Application Development course. 
+This is a mobile ticketing app desinged for iOS and Android, structured as a client-server architecture.
+Users of the app can create an account, reserve seats, and checkout tickets. The focus of this project is on idempotency handing and designing operations as either idempotent or non-idempotent. 
+The server is built on Python SQL-Alchemy, while the client is built on Xamarin Forms & Flask.
+
+### Dependencies
+Rider 2022
+Visual Studio Version 16
+SQL Alchemy
+Flask 
+Xamarin Forms
+
+### Install
+
+#### Server Side Install
+Install the following Python packages:
+``` 
+pip3 install requests flask flask_sqlalchemy eventlet flask_socketio 
+```
+
+Run 'TicketingServer.py' first:
+``` 
+python3 TicketingServer.py 
+```
+
+Then run 'InitDB.py': 
+``` 
+python3 InitDB.py 
+```
+
+#### Client Side Install
+*To be completed*
+
 ### Completed Features Table 
 | Title       | Server/Client  | Completed? |
 | ----------- | -----------  | ----------- |

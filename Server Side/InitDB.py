@@ -37,14 +37,14 @@ user_2 = {"email": "jane@bju.edu", "password": "654321"}
 
 #Uncomment code below to insert initial records into a blank db
 
-r1 = requests.post("http://localhost:5000/events",json=event_1)
-r2 = requests.post("http://localhost:5000/events",json=event_2)
-r3 = requests.post("http://localhost:5000/events",json=event_3)
-r4 = requests.post("http://localhost:5000/events/1/seating", json=seatingchart_1)
-r5 = requests.post("http://localhost:5000/events/2/seating", json=seatingchart_2)
-r6 = requests.post("http://localhost:5000/events/3/seating", json=seatingchart_3)
-r7 = requests.post("http://localhost:5000/users", json=user_1)
-r8 = requests.post("http://localhost:5000/users", json=user_2)
+r1 = requests.post("http://localhost:8080/events",json=event_1)
+r2 = requests.post("http://localhost:8080/events",json=event_2)
+r3 = requests.post("http://localhost:8080/events",json=event_3)
+r4 = requests.post("http://localhost:8080/events/1/seating", json=seatingchart_1)
+r5 = requests.post("http://localhost:8080/events/2/seating", json=seatingchart_2)
+r6 = requests.post("http://localhost:8080/events/3/seating", json=seatingchart_3)
+r7 = requests.post("http://localhost:8080/users", json=user_1)
+r8 = requests.post("http://localhost:8080/users", json=user_2)
 
 print(f'Response Code For Post: {r1.status_code}\n{r1.text}')
 print(f'Response Code For Post: {r2.status_code}\n{r2.text}')
@@ -63,7 +63,7 @@ print(f'Response Code For Post: {r8.status_code}\n{r8.text}')
 '''
 
 event_4 = {"title": "My Test Event", "description": "This event is for testing purposes only.", "priceperseat":15,"durationhours":3,"dateandtime": datetime.datetime(2021, 12, 15, 8, 30).strftime("%m/%d/%Y, %H:%M:%S")}
-rt1 = requests.post("http://localhost:5000/events",json=event_4)
+rt1 = requests.post("http://localhost:8080/events",json=event_4)
 print(f'Response Code For Post: {rt1.status_code}\n{rt1.text}')
 
 
